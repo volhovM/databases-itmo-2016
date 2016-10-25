@@ -1,0 +1,173 @@
+#+LANGUAGE: ru
+#+TITLE: ДЗ 4
+#+Author: Михаил Волхов M3438
+
+* Задание
+  Имея отношение с аттрибутами $StudentId, StudentName, GroupId, GroupName, CourseId, CourseName,
+  LecturerId, LecturerName, Mark$:
+  1. Привести его к 5НФ.
+  2. Построить модель сущность-связь.
+  3. Построить физическую модель.
+  4. Написать SQL-скрипты, создающие схему БД.
+  5. Создать БД, заполнить ее данными.
+* Приведение к 5НФ
+** 1НФ
+   Для начала убедимся, что отношение в 1НФ:
+   * В нем нет повторяющихся групп
+   * Все атрибуты действительно атомарны
+   * У отношения есть ключ $StudentId, CourseId$ (как известно из
+     задания (3)).
+
+   Напомним также, какие в отношении есть ФЗ:
+   * $StudentId → StudentName$
+   * $GroupId → GroupName$
+   * $CourseId → CourseName$
+   * $LecturerId → LecturerName$
+   * $StudentId → GroupId$
+   * $GroupId, CourseId → LecturerId$
+   * $StudentId, CourseId → Mark$
+** 2НФ
+   2НФ требует, чтобы от ключа в целом ($StudentId, CourseId$) зависели
+   все остальные неключевые аттрибуты.
+
+   Отметим, что все отношения вида $*Id → *Name$ не подходят под
+   это требование, так как зависят транзитивно только от части ключа:
+   * $StudentId → StudentName$
+   * $GroupId → GroupName$
+   * $CourseId → CourseName$
+   * $LecturerId → LecturerName$
+
+   Также под это требование не подходит ФЗ $StudentId → GroupId$.
+
+   После декомпозиции по этим 5 ФЗ получим следующие отношения:
+   1. $StudentId, StudentName$
+   2. $StudentId, GroupId$
+   3. $GroupId, GroupName$
+   4. $CourseId, CourseName$
+   5. $LecturerId, LecturerName$
+   6. $StudentId, GroupId, CourseId, LecturerId, Mark$
+
+   Для каждого отношения кроме последнего $*Id$ является ключом, и
+   каждое сохраняет свойства соответствующей ФЗ, поэтому находится в
+   2НФ.
+** 3НФ/НФБK
+   Предикатом принадлежности отошения к 3НФ является то, что все
+   неключевые элементы зависят от ключа непосредственно. Как можно
+   заметить из первоначального набора ФЗ, это выполняется для уже
+   готового множества отношений кроме (6).
+
+   Декомпозируем (6) на:
+   * $GroupId, CourseId, LecturerId$
+   * $StudentId, CourseId, Mark$
+
+   Аналогично заметим, что отношения находятся в НФБК, потому что в
+   каждой нетривиальной ФЗ (у нас по одной на отношение кроме отношения
+   (6)) $X → Y$, $X$ есть надключ.
+** 4НФ
+   Многозначные зависимости в таблицах $*Id → *Name$ выглядят как $*Id
+   ↠ *Name$ поскольку в обоих случаях по определению $C = R ∖ ({*Name}
+   ∪ {*Id}) ≡ ∅$, а от $∅$ $*Name$ не зависит, но зависит от $*Id$. В
+   таком случае, первые четыре отношения уже находятся в 4НФ. Вообще
+   это правило, конечно же, работает для любых отношений с двумя
+   атрибутами, поэтому (5) тоже в 4НФ; осталось рассмотреть только (6,7).
+
+   Имеем два отношения: $GroupId, CourseId, LecturerId$ и $StudentId,
+   LecturerId, Mark$. Они симметричны, поэтому рассмотрим одно
+   произвольное без потери общности.
+   * $∀ X,M,Z . (X ↠ Y | Z ⇒ ∀ A . X → A )$ верно для для данного
+     отношения, поскольку в единственной МЗ $StudentId, CourseId$ есть
+     ключ, она же ФЗ.
+   * $∀ X,M,Z . (X ↠ Y | Z ⇒ X надключ)$ тоже выполняется.
+   * МЗ есть ФЗ и отношение в НФБК. Очевидно верно.
+
+   Следовательно, отношения уже находятся в 4НФ.
+** 5НФ
+   * Отношения с двумя элементами ($A, B$, где $A → B$) уже в 5НФ:
+     1. Имеют только одну ФЗ, которая есть МЗ.
+     2. $A ↠ B | ∅$, тогда по теореме Фейгина $*\{AB,A\}$ --
+        единственная нетривиальная зависимость соединения.
+     3. Каждый элемент ее -- надключ.
+   * Отношения с тремя элементами ($A, B, C$, где $A B → C$) тоже в
+     5НФ:
+     1. Аналогично.
+     2. $A B ↠ C | ∅$, единственная нетривиальная ЗС -- $*\{ABC,AB\}$.
+     3. Опять-таки, каждый элемент ее -- надключ.
+
+   Отсюда каждое отношение в множестве находится в 5НФ.
+** Результат
+   Получили семь отношений в пятой нормальной форме:
+   1. $StudentId, StudentName$
+   2. $GroupId, GroupName$
+   3. $CourseId, CourseName$
+   4. $LecturerId, LecturerName$
+   5. $StudentId, GroupId$
+   6. $GroupId, CourseId, LecturerId$
+   7. $StudentId, CourseId, Mark$
+* Модель сущность-связь
+  #+ATTR_HTML: :height 400 :style border:none; box-shadow:none;
+  [[file:./HW4_ERM.png]]
+* Физическая модель
+  #+ATTR_HTML: :height 400 :style border:none; box-shadow:none;
+  [[file:./HW4_PM.png]]
+* Скрипты, создающие БД
+  #+BEGIN_SRC sql
+  hw4=# CREATE TABLE GroupInfo (GroupId int NOT NULL,
+                                GroupName varchar(20) NOT NULL,
+                                PRIMARY KEY (GroupId));
+  CREATE TABLE
+  hw4=# CREATE TABLE CourseInfo (CourseId int NOT NULL,
+                                 CourseName varchar(20) NOT NULL,
+                                 PRIMARY KEY (CourseId));
+  CREATE TABLE
+  hw4=# CREATE TABLE LecturerInfo (LecturerId int NOT NULL,
+                                   LecturerName varchar(20) NOT NULL,
+                                   PRIMARY KEY (LecturerId));
+  CREATE TABLE
+  hw4=# CREATE TABLE StudentInfo (StudentId int NOT NULL,
+                                  StudentName varchar(20) NOT NULL,
+                                  GroupId int NOT NULL,
+                                  PRIMARY KEY (StudentId),
+                                  FOREIGN KEY (GroupId) REFERENCES GroupInfo(GroupId));
+  CREATE TABLE
+  hw4=# CREATE TABLE Marks (StudentId int NOT NULL,
+                            CourseId int NOT NULL,
+                            Mark int NOT NULL,
+                            PRIMARY KEY (StudentId,CourseId),
+                            FOREIGN KEY (StudentId) REFERENCES StudentInfo(StudentId),
+                            FOREIGN KEY (CourseId) REFERENCES CourseInfo(CourseId));
+  CREATE TABLE
+  hw4=# CREATE TABLE WorkingPlan (CourseId int NOT NULL,
+                                  GroupId int NOT NULL,
+                                  LecturerId int NOT NULL,
+                                  PRIMARY KEY (CourseId,GroupId,LecturerId),
+                                  FOREIGN KEY (CourseId) REFERENCES CourseInfo(CourseId),
+                                  FOREIGN KEY (GroupId) REFERENCES GroupInfo(GroupId),
+                                  FOREIGN KEY (LecturerId) REFERENCES LecturerInfo(LecturerId));
+  CREATE TABLE
+  #+END_SRC
+* Заполнение данными
+  #+BEGIN_SRC sql
+  hw4=# INSERT INTO LecturerInfo VALUES (1, 'Аркадий Шагал');
+  INSERT 0 1
+  hw4=# INSERT INTO LecturerInfo VALUES (2, 'Георгий Корнеев');
+  INSERT 0 1
+  hw4=# INSERT INTO LecturerInfo VALUES (3, 'Кудряшов Борис');
+  INSERT 0 1
+  hw4=# INSERT INTO LecturerInfo VALUES (4, 'Александр Сегаль');
+  INSERT 0 1
+
+  hw4=# INSERT INTO GroupInfo VALUES (1, 'M3338'), (2, 'M3339');
+  INSERT 0 2
+  hw4=# INSERT INTO CourseInfo VALUES (1, 'Базы данных'), (2, 'Численные методы');
+  INSERT 0 2
+  hw4=# INSERT INTO StudentInfo VALUES (1, 'Михаил Волхов', 1), (2, 'Антін Білий', 2);
+  INSERT 0 2
+
+  hw4=# INSERT INTO WorkingPlan values (1, 1, 2), (1, 2, 2);
+  INSERT 0 2
+  hw4=# INSERT INTO WorkingPlan values (2, 1, 4);
+  INSERT 0 1
+
+  hw4=# INSERT INTO Marks values (1, 1, 85), (2, 2, 76);
+  INSERT 0 2
+  #+END_SRC

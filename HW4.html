@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+<!-- 2016-10-25 Tue 13:39 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>ДЗ 4</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Михаил Волхов M3438" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">ДЗ 4</h1>
+<div id="table-of-contents">
+<h2>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. Задание</a></li>
+<li><a href="#orgheadline8">2. Приведение к 5НФ</a>
+<ul>
+<li><a href="#orgheadline2">2.1. 1НФ</a></li>
+<li><a href="#orgheadline3">2.2. 2НФ</a></li>
+<li><a href="#orgheadline4">2.3. 3НФ/НФБK</a></li>
+<li><a href="#orgheadline5">2.4. 4НФ</a></li>
+<li><a href="#orgheadline6">2.5. 5НФ</a></li>
+<li><a href="#orgheadline7">2.6. Результат</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline9">3. Модель сущность-связь</a></li>
+<li><a href="#orgheadline10">4. Физическая модель</a></li>
+<li><a href="#orgheadline11">5. Скрипты, создающие БД</a></li>
+<li><a href="#orgheadline12">6. Заполнение данными</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> Задание</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Имея отношение с аттрибутами \(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName,
+  LecturerId, LecturerName, Mark\):
+</p>
+<ol class="org-ol">
+<li>Привести его к 5НФ.</li>
+<li>Построить модель сущность-связь.</li>
+<li>Построить физическую модель.</li>
+<li>Написать SQL-скрипты, создающие схему БД.</li>
+<li>Создать БД, заполнить ее данными.</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline8" class="outline-2">
+<h2 id="orgheadline8"><span class="section-number-2">2</span> Приведение к 5НФ</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">2.1</span> 1НФ</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Для начала убедимся, что отношение в 1НФ:
+</p>
+<ul class="org-ul">
+<li>В нем нет повторяющихся групп</li>
+<li>Все атрибуты действительно атомарны</li>
+<li>У отношения есть ключ \(StudentId, CourseId\) (как известно из
+задания (3)).</li>
+</ul>
+
+<p>
+Напомним также, какие в отношении есть ФЗ:
+</p>
+<ul class="org-ul">
+<li>\(StudentId → StudentName\)</li>
+<li>\(GroupId → GroupName\)</li>
+<li>\(CourseId → CourseName\)</li>
+<li>\(LecturerId → LecturerName\)</li>
+<li>\(StudentId → GroupId\)</li>
+<li>\(GroupId, CourseId → LecturerId\)</li>
+<li>\(StudentId, CourseId → Mark\)</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">2.2</span> 2НФ</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+2НФ требует, чтобы от ключа в целом (\(StudentId, CourseId\)) зависели
+все остальные неключевые аттрибуты.
+</p>
+
+<p>
+Отметим, что все отношения вида \(*Id → *Name\) не подходят под
+это требование, так как зависят транзитивно только от части ключа:
+</p>
+<ul class="org-ul">
+<li>\(StudentId → StudentName\)</li>
+<li>\(GroupId → GroupName\)</li>
+<li>\(CourseId → CourseName\)</li>
+<li>\(LecturerId → LecturerName\)</li>
+</ul>
+
+<p>
+Также под это требование не подходит ФЗ \(StudentId → GroupId\).
+</p>
+
+<p>
+После декомпозиции по этим 5 ФЗ получим следующие отношения:
+</p>
+<ol class="org-ol">
+<li>\(StudentId, StudentName\)</li>
+<li>\(StudentId, GroupId\)</li>
+<li>\(GroupId, GroupName\)</li>
+<li>\(CourseId, CourseName\)</li>
+<li>\(LecturerId, LecturerName\)</li>
+<li>\(StudentId, GroupId, CourseId, LecturerId, Mark\)</li>
+</ol>
+
+<p>
+Для каждого отношения кроме последнего \(*Id\) является ключом, и
+каждое сохраняет свойства соответствующей ФЗ, поэтому находится в
+2НФ.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline4" class="outline-3">
+<h3 id="orgheadline4"><span class="section-number-3">2.3</span> 3НФ/НФБK</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Предикатом принадлежности отошения к 3НФ является то, что все
+неключевые элементы зависят от ключа непосредственно. Как можно
+заметить из первоначального набора ФЗ, это выполняется для уже
+готового множества отношений кроме (6).
+</p>
+
+<p>
+Декомпозируем (6) на:
+</p>
+<ul class="org-ul">
+<li>\(GroupId, CourseId, LecturerId\)</li>
+<li>\(StudentId, CourseId, Mark\)</li>
+</ul>
+
+<p>
+Аналогично заметим, что отношения находятся в НФБК, потому что в
+каждой нетривиальной ФЗ (у нас по одной на отношение кроме отношения
+(6)) \(X → Y\), \(X\) есть надключ.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><span class="section-number-3">2.4</span> 4НФ</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+Многозначные зависимости в таблицах \(*Id → *Name\) выглядят как \(*Id
+   ↠ *Name\) поскольку в обоих случаях по определению \(C = R ∖ ({*Name}
+   ∪ {*Id}) ≡ ∅\), а от \(∅\) \(*Name\) не зависит, но зависит от \(*Id\). В
+таком случае, первые четыре отношения уже находятся в 4НФ. Вообще
+это правило, конечно же, работает для любых отношений с двумя
+атрибутами, поэтому (5) тоже в 4НФ; осталось рассмотреть только (6,7).
+</p>
+
+<p>
+Имеем два отношения: \(GroupId, CourseId, LecturerId\) и \(StudentId,
+   LecturerId, Mark\). Они симметричны, поэтому рассмотрим одно
+произвольное без потери общности.
+</p>
+<ul class="org-ul">
+<li>\(∀ X,M,Z . (X ↠ Y | Z ⇒ ∀ A . X → A )\) верно для для данного
+отношения, поскольку в единственной МЗ \(StudentId, CourseId\) есть
+ключ, она же ФЗ.</li>
+<li>\(∀ X,M,Z . (X ↠ Y | Z ⇒ X надключ)\) тоже выполняется.</li>
+<li>МЗ есть ФЗ и отношение в НФБК. Очевидно верно.</li>
+</ul>
+
+<p>
+Следовательно, отношения уже находятся в 4НФ.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6"><span class="section-number-3">2.5</span> 5НФ</h3>
+<div class="outline-text-3" id="text-2-5">
+<ul class="org-ul">
+<li>Отношения с двумя элементами (\(A, B\), где \(A → B\)) уже в 5НФ:
+<ol class="org-ol">
+<li>Имеют только одну ФЗ, которая есть МЗ.</li>
+<li>\(A ↠ B | ∅\), тогда по теореме Фейгина \(*\{AB,A\}\) &#x2013;
+единственная нетривиальная зависимость соединения.</li>
+<li>Каждый элемент ее &#x2013; надключ.</li>
+</ol></li>
+<li>Отношения с тремя элементами (\(A, B, C\), где \(A B → C\)) тоже в
+5НФ:
+<ol class="org-ol">
+<li>Аналогично.</li>
+<li>\(A B ↠ C | ∅\), единственная нетривиальная ЗС &#x2013; \(*\{ABC,AB\}\).</li>
+<li>Опять-таки, каждый элемент ее &#x2013; надключ.</li>
+</ol></li>
+</ul>
+
+<p>
+Отсюда каждое отношение в множестве находится в 5НФ.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-3">
+<h3 id="orgheadline7"><span class="section-number-3">2.6</span> Результат</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+Получили семь отношений в пятой нормальной форме:
+</p>
+<ol class="org-ol">
+<li>\(StudentId, StudentName\)</li>
+<li>\(GroupId, GroupName\)</li>
+<li>\(CourseId, CourseName\)</li>
+<li>\(LecturerId, LecturerName\)</li>
+<li>\(StudentId, GroupId\)</li>
+<li>\(GroupId, CourseId, LecturerId\)</li>
+<li>\(StudentId, CourseId, Mark\)</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline9" class="outline-2">
+<h2 id="orgheadline9"><span class="section-number-2">3</span> Модель сущность-связь</h2>
+<div class="outline-text-2" id="text-3">
+
+<div class="figure">
+<p><img src="./HW4_ERM.png" alt="HW4_ERM.png" height="400" style="border:none; box-shadow:none;" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline10" class="outline-2">
+<h2 id="orgheadline10"><span class="section-number-2">4</span> Физическая модель</h2>
+<div class="outline-text-2" id="text-4">
+
+<div class="figure">
+<p><img src="./HW4_PM.png" alt="HW4_PM.png" height="400" style="border:none; box-shadow:none;" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline11" class="outline-2">
+<h2 id="orgheadline11"><span class="section-number-2">5</span> Скрипты, создающие БД</h2>
+<div class="outline-text-2" id="text-5">
+<div class="org-src-container">
+
+<pre class="src src-sql">hw4=# <span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> GroupInfo (GroupId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                              GroupName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                              <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (GroupId));
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span>
+hw4=# <span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> CourseInfo (CourseId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                               CourseName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                               <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (CourseId));
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span>
+hw4=# <span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> LecturerInfo (LecturerId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                 LecturerName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                 <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (LecturerId));
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span>
+hw4=# <span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> StudentInfo (StudentId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                StudentName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                GroupId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (StudentId),
+                                <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (GroupId) <span style="color: #FFA070;">REFERENCES</span> GroupInfo(GroupId));
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span>
+hw4=# <span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> Marks (StudentId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                          CourseId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                          Mark <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                          <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (StudentId,CourseId),
+                          <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (StudentId) <span style="color: #FFA070;">REFERENCES</span> StudentInfo(StudentId),
+                          <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (CourseId) <span style="color: #FFA070;">REFERENCES</span> CourseInfo(CourseId));
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span>
+hw4=# <span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> WorkingPlan (CourseId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                GroupId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                LecturerId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+                                <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (CourseId,GroupId,LecturerId),
+                                <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (CourseId) <span style="color: #FFA070;">REFERENCES</span> CourseInfo(CourseId),
+                                <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (GroupId) <span style="color: #FFA070;">REFERENCES</span> GroupInfo(GroupId),
+                                <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (LecturerId) <span style="color: #FFA070;">REFERENCES</span> LecturerInfo(LecturerId));
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline12" class="outline-2">
+<h2 id="orgheadline12"><span class="section-number-2">6</span> Заполнение данными</h2>
+<div class="outline-text-2" id="text-6">
+<div class="org-src-container">
+
+<pre class="src src-sql">hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> LecturerInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'&#1040;&#1088;&#1082;&#1072;&#1076;&#1080;&#1081; &#1064;&#1072;&#1075;&#1072;&#1083;'</span>);
+<span style="color: #FFA070;">INSERT</span> 0 1
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> LecturerInfo <span style="color: #FFA070;">VALUES</span> (2, <span style="color: #868B44;">'&#1043;&#1077;&#1086;&#1088;&#1075;&#1080;&#1081; &#1050;&#1086;&#1088;&#1085;&#1077;&#1077;&#1074;'</span>);
+<span style="color: #FFA070;">INSERT</span> 0 1
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> LecturerInfo <span style="color: #FFA070;">VALUES</span> (3, <span style="color: #868B44;">'&#1050;&#1091;&#1076;&#1088;&#1103;&#1096;&#1086;&#1074; &#1041;&#1086;&#1088;&#1080;&#1089;'</span>);
+<span style="color: #FFA070;">INSERT</span> 0 1
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> LecturerInfo <span style="color: #FFA070;">VALUES</span> (4, <span style="color: #868B44;">'&#1040;&#1083;&#1077;&#1082;&#1089;&#1072;&#1085;&#1076;&#1088; &#1057;&#1077;&#1075;&#1072;&#1083;&#1100;'</span>);
+<span style="color: #FFA070;">INSERT</span> 0 1
+
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> GroupInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'M3338'</span>), (2, <span style="color: #868B44;">'M3339'</span>);
+<span style="color: #FFA070;">INSERT</span> 0 2
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> CourseInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'&#1041;&#1072;&#1079;&#1099; &#1076;&#1072;&#1085;&#1085;&#1099;&#1093;'</span>), (2, <span style="color: #868B44;">'&#1063;&#1080;&#1089;&#1083;&#1077;&#1085;&#1085;&#1099;&#1077; &#1084;&#1077;&#1090;&#1086;&#1076;&#1099;'</span>);
+<span style="color: #FFA070;">INSERT</span> 0 2
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> StudentInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'&#1052;&#1080;&#1093;&#1072;&#1080;&#1083; &#1042;&#1086;&#1083;&#1093;&#1086;&#1074;'</span>, 1), (2, <span style="color: #868B44;">'&#1040;&#1085;&#1090;&#1110;&#1085; &#1041;&#1110;&#1083;&#1080;&#1081;'</span>, 2);
+<span style="color: #FFA070;">INSERT</span> 0 2
+
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> WorkingPlan <span style="color: #FFA070;">values</span> (1, 1, 2), (1, 2, 2);
+<span style="color: #FFA070;">INSERT</span> 0 2
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> WorkingPlan <span style="color: #FFA070;">values</span> (2, 1, 4);
+<span style="color: #FFA070;">INSERT</span> 0 1
+
+hw4=# <span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Marks <span style="color: #FFA070;">values</span> (1, 1, 85), (2, 2, 76);
+<span style="color: #FFA070;">INSERT</span> 0 2
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Михаил Волхов M3438</p>
+<p class="date">Created: 2016-10-25 Tue 13:39</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

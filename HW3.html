@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
 <head>
-<!-- 2016-10-24 Mon 23:22 -->
+<!-- 2016-10-25 Tue 13:40 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title>ДЗ 3</title>
@@ -255,7 +255,7 @@ for the JavaScript code in this tag.
 Сделаем два замечания:
 </p>
 <ol class="org-ol">
-<li>Четыре ФЗ выражают похожую зависимость \(*Id -> *Name\).</li>
+<li>Четыре ФЗ выражают похожую зависимость \(*Id → *Name\).</li>
 <li>Модель "курс и группа определяют преподавателя", выражаемая
 шестой ФЗ, не соответствует в точности жизненным реалиям (один
 предмет у одной группы могут вести несколько преподавателей).</li>
@@ -291,11 +291,11 @@ Id).
 <div class="outline-text-2" id="text-4">
 <ol class="org-ol">
 <li>Для каждого правила расщепим правую часть чтобы она стала
-единичной. Эта операци не имеет смысла, так как нетривиальные ФЗ
+единичной. Эта операция не имеет смысла, так как нетривиальные ФЗ
 нашей модели и так содержат только по одному атрибуту справа.</li>
 <li>Будем удалять атрибуты \(A\) из \(A ∪ X → B\), такие что \((A ∪
      X)^{+}_{S} = A^{+}_{S}\). Очевидно, что на этом шаге ФЗ, в которых
-левая часть содержит только один элемент (\(*Id -> *Name\)) не
+левая часть содержит только один элемент (\(*Id → *Name\)) не
 могут быть выкинуты из сета.
 <ol class="org-ol">
 <li><p>
@@ -339,7 +339,7 @@ Id).
 <li>\(GroupId → GroupName\)</li>
 <li>\(CourseId → CourseName\)</li>
 <li>\(LecturerId → LecturerName\)</li>
-<li>\(CourseId, GroupId → LecturerId\)</li>
+<li>\(GroupId, CourseId → LecturerId\)</li>
 <li>\(StudentId, CourseId → Mark\)</li>
 </ul>
 </div>
@@ -347,7 +347,7 @@ Id).
 </div>
 <div id="postamble" class="status">
 <p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Михаил Волхов M3438</p>
-<p class="date">Created: 2016-10-24 Mon 23:22</p>
+<p class="date">Created: 2016-10-25 Tue 13:40</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
