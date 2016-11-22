@@ -147,7 +147,7 @@
   #+END_SRC
 * Заполнение данными
   #+BEGIN_SRC sql
-  hw4=# INSERT INTO LecturerInfo VALUES (1, 'Аркадий Шагал');
+  hw4=# INSERT INTO LecturerInfo VALUES (1, 'Аркадий Шагал'), (2, 'Георгий Корнеев'), (3, 'Кудряшов Борис'), (4, 'Александр Сегаль');
   INSERT 0 1
   hw4=# INSERT INTO LecturerInfo VALUES (2, 'Георгий Корнеев');
   INSERT 0 1

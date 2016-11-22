@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+<!-- 2016-11-22 Tue 13:22 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>ДЗ 7</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Михаил Волхов M3438" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">ДЗ 7</h1>
+<div id="table-of-contents">
+<h2>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. Формулировка задания</a></li>
+<li><a href="#orgheadline2">2. Схема базы данных и заполнение</a></li>
+<li><a href="#orgheadline3">3. Запросы</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> Формулировка задания</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Написать 8 различных запросов на SQL. Будем считать, что у студента
+долг по предмету, если он изучает этот предмет и имеет по нему менее
+60 баллов. В своей таблице я также буду считать, что если в поле
+оценка стоит <code>null</code>, то это значит, что студенту ее не поставили и
+это долг.
+</p>
+
+<p>
+Использованная база данных &#x2013; <code>postgres-9.5.4</code>.
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">2</span> Схема базы данных и заполнение</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Таблицы:
+</p>
+<ol class="org-ol">
+<li>GroupInfo    (GroupId, GroupName)</li>
+<li>CourseInfo   (CourseId, CourseName)</li>
+<li>LecturerInfo (LecturerId, LecturerName)</li>
+<li>StudentInfo  (StudentId, StudentName, GroupId)</li>
+<li>Marks        (StudentId, CourseId, Mark)</li>
+<li>WorkingPlan  (CourseId, GroupId, LecturerId)</li>
+</ol>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">GroupInfo</span> (
+  GroupId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  GroupName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (GroupId));
+
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">CourseInfo</span> (
+  CourseId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  CourseName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (CourseId));
+
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">LecturerInfo</span> (
+  LecturerId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  LecturerName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (LecturerId));
+
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">StudentInfo</span> (
+  StudentId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  StudentName <span style="color: #EF5C5F;">varchar</span>(20) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  GroupId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (StudentId),
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (GroupId) <span style="color: #FFA070;">REFERENCES</span> GroupInfo(GroupId)
+    <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span> <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">CASCADE</span>);
+
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">Marks</span> (
+  StudentId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  CourseId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  Mark <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (StudentId,CourseId),
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (StudentId) <span style="color: #FFA070;">REFERENCES</span> StudentInfo(StudentId)
+    <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span> <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">CASCADE</span>,
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (CourseId) <span style="color: #FFA070;">REFERENCES</span> CourseInfo(CourseId)
+    <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span> <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">CASCADE</span>);
+
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">WorkingPlan</span> (
+  CourseId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  GroupId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  LecturerId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (CourseId,GroupId,LecturerId),
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (CourseId) <span style="color: #FFA070;">REFERENCES</span> CourseInfo(CourseId)
+    <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span> <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">CASCADE</span>,
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (GroupId) <span style="color: #FFA070;">REFERENCES</span> GroupInfo(GroupId)
+    <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span> <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">CASCADE</span>,
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (LecturerId) <span style="color: #FFA070;">REFERENCES</span> LecturerInfo(LecturerId)
+    <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span> <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">CASCADE</span>);
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> LecturerInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'&#1040;&#1088;&#1082;&#1072;&#1076;&#1080;&#1081; &#1064;&#1072;&#1075;&#1072;&#1083;'</span>),
+  (2, <span style="color: #868B44;">'&#1043;&#1077;&#1086;&#1088;&#1075;&#1080;&#1081; &#1050;&#1086;&#1088;&#1085;&#1077;&#1077;&#1074;'</span>), (3, <span style="color: #868B44;">'&#1050;&#1091;&#1076;&#1088;&#1103;&#1096;&#1086;&#1074; &#1041;&#1086;&#1088;&#1080;&#1089;'</span>), (4, <span style="color: #868B44;">'&#1040;&#1083;&#1077;&#1082;&#1089;&#1072;&#1085;&#1076;&#1088; &#1057;&#1077;&#1075;&#1072;&#1083;&#1100;'</span>);
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> GroupInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'M3437'</span>), (2, <span style="color: #868B44;">'M3438'</span>), (3, <span style="color: #868B44;">'M3439'</span>), (4, <span style="color: #868B44;">'M6666'</span>);
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> StudentInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'&#1054;&#1090;&#1083;&#1080;&#1095;&#1085;&#1099;&#1081; &#1057;&#1090;&#1091;&#1076;&#1077;&#1085;&#1090;'</span>, 3),
+  (2, <span style="color: #868B44;">'&#1061;&#1086;&#1088;&#1086;&#1096;&#1080;&#1081; &#1057;&#1090;&#1091;&#1076;&#1077;&#1085;&#1090;'</span>, 3), (3, <span style="color: #868B44;">'&#1053;&#1086;&#1088;&#1084;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1057;&#1090;&#1091;&#1076;&#1077;&#1085;&#1090;'</span>, 1),
+  (4, <span style="color: #868B44;">'&#1057;&#1090;&#1088;&#1072;&#1085;&#1085;&#1099;&#1081; &#1057;&#1090;&#1091;&#1076;&#1077;&#1085;&#1090;'</span>, 2), (5, <span style="color: #868B44;">'&#1055;&#1083;&#1086;&#1093;&#1086;&#1081; &#1057;&#1090;&#1091;&#1076;&#1077;&#1085;&#1090;'</span>, 2);
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> CourseInfo <span style="color: #FFA070;">VALUES</span> (1, <span style="color: #868B44;">'&#1041;&#1072;&#1079;&#1099; &#1076;&#1072;&#1085;&#1085;&#1099;&#1093;'</span>), (2, <span style="color: #868B44;">'&#1063;&#1080;&#1089;&#1083;&#1077;&#1085;&#1085;&#1099;&#1077; &#1084;&#1077;&#1090;&#1086;&#1076;&#1099;'</span>), (3, <span style="color: #868B44;">'Java'</span>);
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> WorkingPlan <span style="color: #FFA070;">VALUES</span>
+  (1,2,2), (1,3,2),          <span style="color: #637579;">-- Databases for m3338-39</span>
+  (3,1,2), (3,2,2), (3,3,2), <span style="color: #637579;">-- Java for everybody</span>
+  (2,1,4);                   <span style="color: #637579;">-- Segal for chosen ones</span>
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Marks <span style="color: #FFA070;">VALUES</span>
+  (1,1,94), (1,3,87),
+  (2,1,75), (2,3,78),
+  (3,3,70), (3,1,77),
+  (4,1,50), (4,3,97),
+  (5,1,40), (5,3,60);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">3</span> Запросы</h2>
+<div class="outline-text-2" id="text-3">
+<ol class="org-ol">
+<li><p>
+Напишите запрос, удаляющий всех студентов, не имеющих долгов.
+</p>
+
+<p>
+Я хотел написать адекватное решение, которое не пользуется
+cascading на удалении в foreign ключах, но за час я так и не
+нашел способа адекватно удалить данные из двух баз одновременно,
+не повторяя внутренний подзапрос.
+</p>
+
+<p>
+<i>В этот момент я переписал в объявлении базы все foreign key на
+cascading, и тогда запрос выглядит просто так:</i>
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">delete</span> <span style="color: #FFA070;">from</span> studentinfo
+<span style="color: #FFA070;">where</span> studentid <span style="color: #FFA070;">not</span> <span style="color: #FFA070;">in</span> (
+  <span style="color: #FFA070;">select</span> <span style="color: #FFA070;">distinct</span> studentid
+  <span style="color: #FFA070;">from</span> studentinfo <span style="color: #FFA070;">left</span> <span style="color: #FFA070;">join</span> marks <span style="color: #FFA070;">using</span> (studentid)
+  <span style="color: #FFA070;">where</span> mark <span style="color: #FFA070;">is</span> <span style="color: #FFA070;">null</span> <span style="color: #FFA070;">or</span> mark &lt;= 60);
+</pre>
+</div></li>
+<li><p>
+Напишите запрос, удаляющий всех студентов, имеющих 3 и более
+долгов.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">delete</span> <span style="color: #FFA070;">from</span> studentinfo
+<span style="color: #FFA070;">where</span> studentid <span style="color: #FFA070;">in</span> (
+  <span style="color: #FFA070;">select</span> studentid
+  <span style="color: #FFA070;">from</span> studentinfo <span style="color: #FFA070;">left</span> <span style="color: #FFA070;">join</span> marks <span style="color: #FFA070;">using</span> (studentid)
+  <span style="color: #FFA070;">where</span> mark <span style="color: #FFA070;">is</span> <span style="color: #FFA070;">null</span> <span style="color: #FFA070;">or</span> mark &lt;= 60
+  <span style="color: #FFA070;">group</span> <span style="color: #FFA070;">by</span> studentid
+  <span style="color: #FFA070;">having</span> <span style="color: #8fbfdc;">count</span>(*) &gt;= 2);
+</pre>
+</div></li>
+<li><p>
+Напишите запрос, удаляющий все группы, в которых нет студентов.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">delete</span> <span style="color: #FFA070;">from</span> groupinfo
+<span style="color: #FFA070;">where</span> groupid <span style="color: #FFA070;">not</span> <span style="color: #FFA070;">in</span> (<span style="color: #FFA070;">select</span> groupid <span style="color: #FFA070;">from</span> studentinfo <span style="color: #FFA070;">where</span> groupid <span style="color: #FFA070;">is</span> <span style="color: #FFA070;">not</span> <span style="color: #FFA070;">null</span>);
+</pre>
+</div></li>
+<li><p>
+Создайте view <code>Losers</code> в котором для каждого студента, имеющего
+долги, указано их количество.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">create</span> <span style="color: #FFA070;">view</span> <span style="color: #8AAFFA;">Losers</span> <span style="color: #FFA070;">as</span>
+<span style="color: #FFA070;">select</span> s.studentid, s.studentname, <span style="color: #8fbfdc;">count</span>(<span style="color: #FFA070;">m</span>.mark)
+<span style="color: #FFA070;">from</span> studentinfo <span style="color: #FFA070;">as</span> s <span style="color: #FFA070;">left</span> <span style="color: #FFA070;">join</span> marks <span style="color: #FFA070;">as</span> <span style="color: #FFA070;">m</span> <span style="color: #FFA070;">using</span> (studentid)
+<span style="color: #FFA070;">where</span> mark <span style="color: #FFA070;">is</span> <span style="color: #FFA070;">null</span> <span style="color: #FFA070;">or</span> mark &lt;= 60
+<span style="color: #FFA070;">group</span> <span style="color: #FFA070;">by</span> studentid;
+</pre>
+</div></li>
+<li><p>
+Создайте таблицу <code>LoserT</code>, в которой содержится та же информация,
+что во <code>view Losers</code>. Эта таблица должна автоматически
+обновляться при изменении таблицы с баллами.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">create</span> <span style="color: #FFA070;">table</span> <span style="color: #8AAFFA;">LoserT</span> <span style="color: #FFA070;">as</span> <span style="color: #FFA070;">select</span> * <span style="color: #FFA070;">from</span> Losers;
+
+<span style="color: #FFA070;">create</span> <span style="color: #FFA070;">function</span> <span style="color: #8AAFFA;">after_marks_update</span>() <span style="color: #FFA070;">returns</span> <span style="color: #FFA070;">trigger</span> <span style="color: #FFA070;">as</span> $bump_losert$
+<span style="color: #FFA070;">begin</span> <span style="color: #FFA070;">drop</span> <span style="color: #FFA070;">table</span> LoserT; <span style="color: #637579;">-- insert into, on conflict update?</span>
+      <span style="color: #FFA070;">create</span> <span style="color: #FFA070;">table</span> <span style="color: #8AAFFA;">LoserT</span> <span style="color: #FFA070;">as</span> <span style="color: #FFA070;">select</span> * <span style="color: #FFA070;">from</span> Losers;
+      <span style="color: #FFA070;">return</span> <span style="color: #FFA070;">null</span>;
+<span style="color: #FFA070;">end</span>;
+
+$bump_losert$ <span style="color: #FFA070;">LANGUAGE</span> plpgsql;
+
+<span style="color: #FFA070;">create</span> <span style="color: #FFA070;">trigger</span> <span style="color: #8AAFFA;">bump_losers</span>
+<span style="color: #FFA070;">after</span> <span style="color: #FFA070;">insert</span> <span style="color: #FFA070;">or</span> <span style="color: #FFA070;">update</span> <span style="color: #FFA070;">or</span> <span style="color: #FFA070;">delete</span> <span style="color: #FFA070;">on</span> Marks
+<span style="color: #FFA070;">for</span> <span style="color: #FFA070;">each</span> <span style="color: #FFA070;">statement</span> <span style="color: #FFA070;">execute</span> <span style="color: #FFA070;">procedure</span> after_marks_update();
+</pre>
+</div></li>
+<li><p>
+Отключите автоматическое обновление таблицы LoserT.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">drop</span> <span style="color: #FFA070;">trigger</span> <span style="color: #8AAFFA;">bump_losert</span> <span style="color: #FFA070;">on</span> Marks;
+</pre>
+</div></li>
+<li>Node has run out of gas, script execution stopped.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Михаил Волхов M3438</p>
+<p class="date">Created: 2016-11-22 Tue 13:22</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

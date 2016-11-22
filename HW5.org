@@ -1,0 +1,207 @@
+#+LANGUAGE: ru
+#+TITLE: ДЗ 5
+#+AUTHOR: Михаил Волхов M3438
+
+* Условия
+  Домашнее задание предполагает формулировку выражений реляционной
+  алгебры и соответствующих им SQL запросов над базой данных
+  "деканат".
+* Решение
+  1. Информация о студентах с заданной оценкой по предмету «Базы
+     данных».
+
+     \begin{align*}
+     π_{StudentId,StudentName,GroupName}(
+     σ_{CourseName='Базы Данных' ∧ P(Mark)}(
+     ((StudentInfo ⋈ Marks) ⋈ GroupInfo) ⋈ CourseInfo))
+     \end{align*}
+
+     #+BEGIN_SRC sql
+     select studentid, studentname, groupname
+     from (((studentinfo natural join marks) natural join groupinfo) natural join courseinfo)
+     where coursename = 'Базы данных'
+     and mark > 85;
+     #+END_SRC
+
+  2. Информацию о студентах не имеющих оценки по предмету «Базы данных»:
+     1. Среди всех студентов.
+
+        \begin{align*}
+        π_{StudentId,StudentName,GroupName}(
+        σ_{Mark = null ∧ (CourseName = null ∨
+                          CourseName = 'Базы Данных')}(
+        StudentInfo ⟕ Marks ⟕ CourseInfo ⋈ GroupInfo))$
+        \end{align*}
+
+        #+BEGIN_SRC sql
+        select s.studentid, s.studentname, groupname
+        from ((studentinfo s left join
+               marks m on s.studentid = m.studentid) left join
+               courseinfo c on m.courseid = c.courseid) natural join
+               groupinfo
+        where mark is null
+        and (c.coursename is null or c.coursename = 'Базы данных');
+        #+END_SRC
+     2. Среди студентов, у которых есть этот предмет.
+
+        \begin{align*}
+        π_{StudentId,StudentName,GroupName}(σ_{Mark = null}(
+        (π_{CourseId}(σ_{CourseName='Базы Данных'}(CourseInfo))) ⋈ WorkingPlan ⋈ StudentInfo ⟕ Marks ⋈ GroupInfo))
+        \end{align*}
+
+        #+BEGIN_SRC sql
+        select d.studentid, studentname, groupname
+        from ((((select courseid from courseinfo where coursename = 'Базы данных') c
+                natural join workingplan)
+               natural join studentinfo) d
+              left join marks m using (studentid))
+             natural join groupinfo
+        where mark is null;
+        #+END_SRC
+  3. Информация о студентах, имеющих хотя бы одну оценку у заданного
+     лектора.
+
+     \begin{align*}
+     π_{StudentId,StudentName,GroupName}(
+     (π_{LecturerId}(σ_{LecturerName='Базы Данных'}(LecturerInfo))) ⋈ WorkingPlan ⋈ (StudentInfo ⟕ Marks) ⋈ GroupInfo)
+     \end{align*}
+
+     #+BEGIN_SRC sql
+     select studentid, studentname, groupname
+     from (select lecturerid from lecturerinfo where lecturername = 'Георгий Корнеев') k
+          natural join
+          workingplan
+          inner join
+          (studentinfo left join marks using (studentid)) using (courseid, groupid)
+          natural join
+          groupinfo;
+     #+END_SRC
+  4. Идентификаторы студентов, не имеющих ни одной оценки у заданного лектора.
+
+     \begin{align*}
+     π_{StudentId}(σ_{Mark = null}(
+     σ_{LecturerName = X}(WorkingPlan ⋈ LecturerInfo) ⋈ Marks ⟖ StudentInfo))
+     \end{align*}
+
+     #+BEGIN_SRC sql
+     select studentid
+     from (select * from (workingplan natural join lecturerinfo) where lecturername = 'Георгий Корнеев') k
+          natural join marks
+          right join studentinfo using (studentid)
+     where mark is null;
+     #+END_SRC
+  5. Студенты, имеющих оценки по всем предметам заданного лектора.
+
+     \begin{align*}
+     BoolAnd_{HasMark, \{StudentId\}}(
+     π_{\{StudentId,HasMark=(Mark == null)\}}(
+     π_{\{GroupId,CourseId\}}(WorkingPlan ⋈ LecturerInfo) ⋈ StudentInfo ⟕ StudentInfo))
+     \end{align*}
+
+     #+BEGIN_SRC sql
+     select studentid,bool_and(hasMark) as allHasMark
+     from (select studentid, (case when (mark is null) then false else true end) as hasMark
+           from ((select groupid,courseid
+                   from (workingplan natural join lecturerinfo)
+                   where lecturername = 'Георгий Корнеев') k
+                 natural join studentinfo
+                 left join marks using (courseid, studentid))) z
+     group by studentid;
+     #+END_SRC
+  6. Для каждого студента имя и предметы, которые он должен посещать.
+
+     \begin{align*}
+     π_{StudentName,CourseName}(StudentInfo ⋈ GroupInfo ⋈ WorkingPlan ⋈ CourseInfo)
+     \end{align*}
+
+     #+BEGIN_SRC sql
+     select distinct studentname, coursename
+     from studentinfo natural join groupinfo natural join workingplan natural join courseinfo
+     order by studentname;
+     #+END_SRC
+
+     http://stackoverflow.com/a/43944
+     В Postgre 9 можно аггрегировать по строчкам через запятую
+     (~string_agg/array_agg~), если это то, что требовалось. В
+     дальшейшем я буду предполагать, что нет, потому что функция
+     достаточно специфичная.
+  7. По лектору все студенты, у которых он хоть что-нибудь преподавал.
+
+     \begin{align*}
+     π_{LecturerName,StudentName}(LecturerInfo ⋈ WorkingPlan ⋈ GroupInfo ⋈ CourseInfo)
+     \end{align*}
+
+     #+BEGIN_SRC sql
+     select distinct lecturername, studentname
+     from (lecturerinfo natural join workingplan natural join groupinfo natural join studentinfo);
+     #+END_SRC
+  8. TODO
+  9. TODO
+  10. Средний балл студента. Будем считать, что средний балл --
+      средний по всем предметам, который студент изучеает. Оценки нет
+      => оценка 0. Примечание: интерфейс функции в терминах алгебры
+      подразумевает выкидывание всех атрибутов кроме тех, по которым
+      итерируемся. Будем считать, что они не выкидываются, иначе
+      запрос придется копировать дважды.
+      1. По идентификатору.
+
+         \begin{align*}
+         Avg_{Average, \{markReal\}}(ε_{markReal = if null mark then 0
+         else mark}(π_{StudentId,StudentName}(
+         σ_{studentid=X}(StudentInfo ⋈ GroupInfo ⋈ WorkingPlan ⟕ Marks))))
+         \end{align*}
+
+         #+BEGIN_SRC sql
+         select avg(markReal) as average
+         from (select studentid,
+                      studentname,
+                      (case when (mark is null) then 0 else mark end) as markReal
+               from (studentinfo natural join
+                     groupinfo natural join
+                     workingplan left join
+                     marks using (studentid,courseid))
+               where studentid = 1) z
+         group by studentid, studentname;
+         #+END_SRC
+      2. Для каждого студента.
+         \begin{align*}
+         Avg_{Average, \{markReal\}}(ε_{markReal = if null mark then 0
+         else mark}(π_{StudentId,StudentName}(StudentInfo ⋈ GroupInfo ⋈ WorkingPlan ⟕ Marks)))
+         \end{align*}
+
+         #+BEGIN_SRC sql
+         select studentid, studentname, avg(markReal) as average
+         from (select studentid,
+                      studentname,
+                      (case when (mark is null) then 0 else mark end) as markReal
+               from (studentinfo natural join
+                     groupinfo natural join
+                     workingplan left join
+                     marks using (studentid,courseid))) z
+         group by studentid, studentname;
+         #+END_SRC
+  11. Средний балл средних баллов студентов каждой группы.
+
+      \begin{align*}
+      Avg_{AverageGroup, \{AverageStudent\}}(
+      π_{GroupId,AverageStudent}(
+      Avg_{AverageStudent, \{markReal\}}(
+      ε_{markReal = if null mark then 0 else mark}(
+      π_{StudentId,GroupId}(
+      StudentInfo ⋈ GroupInfo ⋈ WorkingPlan ⟕ Marks)))))
+      \end{align*}
+
+      #+BEGIN_SRC sql
+      select groupid, avg(averageStudent) as averageGroup
+      from (select groupid, avg(markReal) as averageStudent
+            from (select studentid,
+                         groupid,
+                         (case when (mark is null) then 0 else mark end) as markReal
+                  from (studentinfo natural join
+                        groupinfo natural join
+                        workingplan left join
+                        marks using (studentid,courseid))) z
+            group by studentid, groupid) y
+      group by groupid;
+      #+END_SRC
+  12. TODO
