@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+<!-- 2016-11-29 Tue 04:45 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>ДЗ 8</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Михаил Волхов M3438" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">ДЗ 8</h1>
+<div id="table-of-contents">
+<h2>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline1">1. Проектирование базы Airlines</a></li>
+<li><a href="#orgheadline2">2. Запросы к базе</a></li>
+<li><a href="#orgheadline3">3. Индексы</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> Проектирование базы Airlines</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Для начала определимся с таблицами, которые уже предоставлены
+(<code>Flights(FlightId, FligtTime, PlaneId), Seats(PlaneId, SeatNo)</code>) и
+создадим их. Добавим поле <code>SoldOut</code> в <code>Flights</code>, что будет
+семантически соответствовать требованию "продажи автоматически
+закрываются не позднее двух часов до вылета рейса, либо при
+распродаже всех мест либо по запросу администратора".
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> Seats;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">Seats</span>(
+    PlaneId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span> <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span>,
+    SeatNum <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>
+);
+
+<span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> Flights;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">Flights</span>(
+  FlightId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span> <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span>,
+  FlightTime <span style="color: #EF5C5F;">timestamp</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  PlaneId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+  SoldOut <span style="color: #EF5C5F;">boolean</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+
+  <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (PlaneId) <span style="color: #FFA070;">REFERENCES</span> Seats(PlaneId) <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span>
+);
+</pre>
+</div>
+
+<p>
+Для бронирования и покупки мест создадим следующую физическую
+модель: хранить билеты будем в таблице <code>Tickets</code>, представляя
+бронирования как неоплаченные билеты. Это поможет предоставить
+гарантию того, что место не может быть купленым и забронированным
+одновременно.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> Tickets;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">TABLE</span> <span style="color: #8AAFFA;">Tickets</span>(
+    UserId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+    FlightId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+    SeatId <span style="color: #EF5C5F;">int</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span>,
+    Expiration <span style="color: #EF5C5F;">timestamp</span>,
+    IsPaid <span style="color: #EF5C5F;">boolean</span> <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">NULL</span> <span style="color: #FFA070;">DEFAULT</span> <span style="color: #FFA070;">False</span>,
+
+    <span style="color: #FFA070;">PRIMARY</span> <span style="color: #FFA070;">KEY</span> (UserId, FlightId, SeatId),
+    <span style="color: #FFA070;">FOREIGN</span> <span style="color: #FFA070;">KEY</span> (FlightId) <span style="color: #FFA070;">REFERENCES</span> Flights(FlightId) <span style="color: #FFA070;">ON</span> <span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">CASCADE</span>,
+    <span style="color: #FFA070;">UNIQUE</span>(FlightId, SeatId) <span style="color: #637579;">-- &#1084;&#1077;&#1089;&#1090;&#1086; &#1085;&#1077; &#1084;&#1086;&#1078;&#1077;&#1090; &#1073;&#1099;&#1090;&#1100; &#1087;&#1088;&#1086;&#1076;&#1072;&#1085;&#1086;/&#1079;&#1072;&#1073;&#1088;&#1086;&#1085;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086; &#1076;&#1074;&#1072;&#1078;&#1076;&#1099;</span>
+);
+</pre>
+</div>
+
+<p>
+Заполним таблицу тестовыми данными:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">FROM</span> Seats <span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">True</span>;
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Seats <span style="color: #FFA070;">VALUES</span>
+  (111, 10),
+  (222, 15),
+  (333, 20);
+
+<span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">FROM</span> Flights <span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">True</span>;
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Flights <span style="color: #FFA070;">VALUES</span>
+  (0, <span style="color: #868B44;">'2016-11-29 12:00:00'</span>, 111, <span style="color: #FFA070;">False</span>),
+  (1, <span style="color: #868B44;">'2016-11-29 22:00:00'</span>, 222, <span style="color: #FFA070;">False</span>),
+  (2, <span style="color: #868B44;">'2016-11-30 06:30:00'</span>, 333, <span style="color: #FFA070;">False</span>),
+  (3, <span style="color: #868B44;">'2016-11-28 06:30:00'</span>, 222, <span style="color: #FFA070;">True</span>);
+
+<span style="color: #FFA070;">DELETE</span> <span style="color: #FFA070;">FROM</span> Tickets <span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">True</span>;
+<span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Tickets <span style="color: #FFA070;">VALUES</span>
+  (0,0,2,<span style="color: #FFA070;">null</span>,<span style="color: #FFA070;">True</span>),
+  (1,0,3,<span style="color: #868B44;">'2016-11-22 08:00:00'</span>,<span style="color: #FFA070;">False</span>),
+  (2,2,5,<span style="color: #868B44;">'2016-11-29 12:00:00'</span>,<span style="color: #FFA070;">False</span>);
+</pre>
+</div>
+
+<p>
+Объявим список представлений, которые помогут в составлении
+запросов в дальнейшем:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #637579;">-- Flights we can buy tickets on.</span>
+<span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> ValidFlights;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">ValidFlights</span> <span style="color: #FFA070;">AS</span>
+<span style="color: #FFA070;">SELECT</span> FlightId, PlaneId <span style="color: #FFA070;">FROM</span> Flights
+<span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">NOT</span> SoldOut <span style="color: #FFA070;">AND</span>
+      FlightTime - now() &gt; <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'2 hour'</span>;
+
+<span style="color: #637579;">-- (planeId, seatId) for every accessible seat in the plane</span>
+<span style="color: #637579;">-- let's suppose there can't be more than 100 seats in plane</span>
+<span style="color: #637579;">-- (we can use 1000 instead)</span>
+<span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> AllSeats;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">AllSeats</span> <span style="color: #FFA070;">AS</span>
+<span style="color: #FFA070;">SELECT</span> S.PlaneId, n <span style="color: #FFA070;">as</span> SeatId
+<span style="color: #FFA070;">FROM</span> generate_series(1,100) <span style="color: #FFA070;">AS</span> a(n), Seats <span style="color: #FFA070;">AS</span> S
+<span style="color: #FFA070;">WHERE</span> n &lt;= S.SeatNum
+<span style="color: #FFA070;">ORDER</span> <span style="color: #FFA070;">BY</span> S.PlaneId;
+
+<span style="color: #637579;">-- Seats for valid flights that are bought or booked. Intuitively</span>
+<span style="color: #637579;">-- for all flights that are accessible, seats for them that</span>
+<span style="color: #637579;">-- can't be booked right now.</span>
+<span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> NonFreeSeats;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">NonFreeSeats</span> <span style="color: #FFA070;">AS</span>
+<span style="color: #FFA070;">SELECT</span> FlightId, SeatId
+<span style="color: #FFA070;">FROM</span> ValidFlights <span style="color: #FFA070;">NATURAL</span> <span style="color: #FFA070;">JOIN</span> Flights <span style="color: #FFA070;">NATURAL</span> <span style="color: #FFA070;">JOIN</span> Tickets
+<span style="color: #FFA070;">WHERE</span> IsPaid <span style="color: #FFA070;">OR</span> <span style="color: #637579;">-- payed tickets</span>
+      (Expiration <span style="color: #FFA070;">is</span> <span style="color: #FFA070;">not</span> <span style="color: #FFA070;">null</span> <span style="color: #FFA070;">AND</span>
+       now() &lt; Expiration <span style="color: #FFA070;">AND</span>
+       FlightTime - Expiration &gt; <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'1 day'</span>);
+
+<span style="color: #637579;">-- Seats that we can book or buy!</span>
+<span style="color: #FFA070;">DROP</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">IF</span> <span style="color: #FFA070;">EXISTS</span> FreeSeats;
+<span style="color: #FFA070;">CREATE</span> <span style="color: #FFA070;">VIEW</span> <span style="color: #8AAFFA;">FreeSeats</span> <span style="color: #FFA070;">AS</span>
+<span style="color: #FFA070;">SELECT</span> FlightId, SeatId
+<span style="color: #FFA070;">FROM</span> ValidFlights <span style="color: #FFA070;">NATURAL</span> <span style="color: #FFA070;">JOIN</span> AllSeats
+<span style="color: #FFA070;">WHERE</span> (FlightId,SeatId) <span style="color: #FFA070;">NOT</span> <span style="color: #FFA070;">IN</span> (<span style="color: #FFA070;">SELECT</span> * <span style="color: #FFA070;">from</span> NonFreeSeats);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">2</span> Запросы к базе</h2>
+<div class="outline-text-2" id="text-2">
+<ol class="org-ol">
+<li><p>
+Покупка билета.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Tickets (UserId, FlightId, SeatId, IsPaid)
+<span style="color: #FFA070;">SELECT</span> 5,2,8,<span style="color: #FFA070;">True</span> <span style="color: #637579;">-- some user data</span>
+<span style="color: #FFA070;">ON</span> CONFLICT (FlightId,SeatId) DO <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">SET</span> IsPaid = <span style="color: #FFA070;">True</span>
+<span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">EXISTS</span> (
+  <span style="color: #FFA070;">SELECT</span> * <span style="color: #FFA070;">FROM</span> FreeSeats
+  <span style="color: #FFA070;">WHERE</span> FlightId = 2 <span style="color: #FFA070;">AND</span> SeatId = 8);
+</pre>
+</div>
+<p>
+При ошибке будет вставлено 0 рядов, что как бы намекает.
+</p></li>
+<li><p>
+Бронирование/продление бронирования
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Tickets (UserId, FlightId, SeatId, Expiration, IsPaid)
+<span style="color: #FFA070;">SELECT</span> 6,3,4,now() + <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'1 day'</span>,<span style="color: #FFA070;">False</span>
+<span style="color: #FFA070;">ON</span> CONFLICT (FlightId,SeatId) DO <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">SET</span> Expiration = now() + <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'1 day'</span>
+<span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">EXISTS</span> (
+  <span style="color: #FFA070;">SELECT</span> * <span style="color: #FFA070;">FROM</span> FreeSeats
+  <span style="color: #FFA070;">WHERE</span> FlightId = 2 <span style="color: #FFA070;">AND</span> SeatId = 8);
+</pre>
+</div></li>
+<li><p>
+Оплата брони.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">UPDATE</span> Tickets
+<span style="color: #FFA070;">SET</span> IsPaid = <span style="color: #FFA070;">True</span>
+<span style="color: #FFA070;">WHERE</span> UserId = 5 <span style="color: #FFA070;">AND</span>
+      FlightId = 0 <span style="color: #FFA070;">AND</span>
+      SeatId = 3 <span style="color: #FFA070;">AND</span>
+      <span style="color: #FFA070;">EXISTS</span> (<span style="color: #FFA070;">SELECT</span> * <span style="color: #FFA070;">FROM</span> FreeSeats
+              <span style="color: #FFA070;">WHERE</span> FlightId = 0 <span style="color: #FFA070;">AND</span> SeatId = 3);
+</pre>
+</div></li>
+<li><p>
+Реквест администратора заморозить продажи.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">UPDATE</span> Flights <span style="color: #FFA070;">SET</span> SoldOut = <span style="color: #FFA070;">True</span> <span style="color: #FFA070;">WHERE</span> FlightId = 123;
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">3</span> Индексы</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+TBD
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Михаил Волхов M3438</p>
+<p class="date">Created: 2016-11-29 Tue 04:45</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
