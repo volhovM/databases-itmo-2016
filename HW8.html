@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
 <head>
-<!-- 2016-11-29 Tue 04:45 -->
+<!-- 2016-11-29 Tue 13:05 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title>ДЗ 8</title>
@@ -154,6 +154,9 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
+<p>
+Весь sql-код написан и протестирован на <code>PostgreSQL 9.5.4</code>.
+</p>
 
 <div id="outline-container-orgheadline1" class="outline-2">
 <h2 id="orgheadline1"><span class="section-number-2">1</span> Проектирование базы Airlines</h2>
@@ -302,7 +305,8 @@ for the JavaScript code in this tag.
 </pre>
 </div>
 <p>
-При ошибке будет вставлено 0 рядов, что как бы намекает.
+При ошибке будет вставлено 0 рядов, что как бы
+намекает. Аналогично и дальше.
 </p></li>
 <li><p>
 Бронирование/продление бронирования
@@ -311,7 +315,8 @@ for the JavaScript code in this tag.
 
 <pre class="src src-sql"><span style="color: #FFA070;">INSERT</span> <span style="color: #FFA070;">INTO</span> Tickets (UserId, FlightId, SeatId, Expiration, IsPaid)
 <span style="color: #FFA070;">SELECT</span> 6,3,4,now() + <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'1 day'</span>,<span style="color: #FFA070;">False</span>
-<span style="color: #FFA070;">ON</span> CONFLICT (FlightId,SeatId) DO <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">SET</span> Expiration = now() + <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'1 day'</span>
+<span style="color: #FFA070;">ON</span> CONFLICT (FlightId,SeatId) DO
+  <span style="color: #FFA070;">UPDATE</span> <span style="color: #FFA070;">SET</span> Expiration = now() + <span style="color: #EF5C5F;">INTERVAL</span> <span style="color: #868B44;">'1 day'</span>
 <span style="color: #FFA070;">WHERE</span> <span style="color: #FFA070;">EXISTS</span> (
   <span style="color: #FFA070;">SELECT</span> * <span style="color: #FFA070;">FROM</span> FreeSeats
   <span style="color: #FFA070;">WHERE</span> FlightId = 2 <span style="color: #FFA070;">AND</span> SeatId = 8);
@@ -339,6 +344,8 @@ for the JavaScript code in this tag.
 <pre class="src src-sql"><span style="color: #FFA070;">UPDATE</span> Flights <span style="color: #FFA070;">SET</span> SoldOut = <span style="color: #FFA070;">True</span> <span style="color: #FFA070;">WHERE</span> FlightId = 123;
 </pre>
 </div></li>
+<li>Запросы на проверки мест тривиально выводятся из представлений в
+первой части.</li>
 </ol>
 </div>
 </div>
@@ -346,14 +353,62 @@ for the JavaScript code in this tag.
 <h2 id="orgheadline3"><span class="section-number-2">3</span> Индексы</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-TBD
+Определим потенциально частые запросы:
 </p>
+<ol class="org-ol">
+<li><code>Flights</code>: поиск рейсов по:
+<ul class="org-ul">
+<li>По индексу рейса (<code>FlightId</code>) и времени (<code>FlightTime</code>), можно
+составить упорядоченный индекс.</li>
+<li>По только лишь времени &#x2013; поиск по временным
+промежуткам, тоже упорядоченный индекс.</li>
+</ul></li>
+<li><code>Tickets</code>:
+<ul class="org-ul">
+<li>Список заказов пользователя по его ID: хэш индекс по <code>UserId</code>.</li>
+<li>По id рейса и месту билеты/брони на него. Упорядоченный индекс
+&#x2013; ускорятся как запросы "все места по этому рейсу" так и
+"конкретное место конкретного рейса".</li>
+</ul></li>
+<li><code>Planes</code>: не вижу необходимости оптимизировать. Обычно самолетный
+парк не то, чтобы очень большой, поэтому запросы должны быть и
+так быстрыми. Но если очень нужно, то хэш индекс по номеру
+самолета или id самолета (номера/модели самолета нету в моем
+определении, но мог бы быть).</li>
+</ol>
+
+<p>
+&gt; Пусть частым запросом является определение средней заполненности
+&gt; самолёта по рейсу. Какие индексы могут помочь при исполнении
+&gt; данного запроса?
+</p>
+
+<p>
+Во-первых нужно в таблицу <code>Flights</code> добавить <code>FlightNum</code>, который
+будет семантически соответствовать именно рейсу, а не id. Дальше на
+нем построить хэш индекс. Также помогут уже упомянутые индексы на
+<code>Tickets</code>, и, возможно, <code>Planes</code>, поскольку придется искать все
+свободные места и их количество, а также сортировать по занятости
+через <code>Tickets</code>. Формально данный запрос будет опираться на
+использование представления <code>FreeSeats</code>, которое, в свою очередь,
+опирается на <code>AllВ реальной имплементации я напишу хэш индекс на
+  ~FlightId</code>, существенной разницы в смысле целей обучения нет.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sql"><span style="color: #FFA070;">CREATE</span> INDEX <span style="color: #FFA070;">ON</span> Flights <span style="color: #FFA070;">USING</span> btree (FlightId,FlightTime);
+<span style="color: #FFA070;">CREATE</span> INDEX <span style="color: #FFA070;">ON</span> Flights <span style="color: #FFA070;">USING</span> btree (FlightTime);
+<span style="color: #FFA070;">CREATE</span> INDEX <span style="color: #FFA070;">ON</span> Tickets <span style="color: #FFA070;">USING</span> hash (UserId);
+<span style="color: #FFA070;">CREATE</span> INDEX <span style="color: #FFA070;">ON</span> Tickets <span style="color: #FFA070;">USING</span> btree (FlightId,SeatId);
+</pre>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Михаил Волхов M3438</p>
-<p class="date">Created: 2016-11-29 Tue 04:45</p>
+<p class="date">Created: 2016-11-29 Tue 13:05</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
