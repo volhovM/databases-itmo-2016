@@ -84,13 +84,6 @@ SELECT FlightId, SeatId
 FROM ValidFlights NATURAL JOIN Flights NATURAL JOIN AllSeats
 WHERE FlightTime - now() > INTERVAL '1 day' AND
       (FlightId,SeatId) NOT IN (SELECT * FROM NonFreeSeats);
---        SELECT FlightId, SeatId
---        FROM ValidFlights NATURAL JOIN Flights NATURAL JOIN Tickets
---        WHERE IsPaid OR                               -- reserved
---              (Expiration IS NOT NULL AND             -- not-expired-ok-bookings
---               Expiration < FlightTime AND
---               now() < Expiration) AND                -- that are expired
---              FlightTime - now() > INTERVAL '1 day'); -- and we still can reserve
 
 ---------------------------
 -- Here's the fun begins --
@@ -151,7 +144,7 @@ BEGIN
        UPDATE SET Expiration = null
                 , UserId = uId
                 , IsPaid = TRUE
-     WHERE (fId,sId) IN (SELECT * FROM FreeSeats);
+     WHERE (fId,sId) IN (SELECT * FROM PurchaseAvailable);
 
    IF FOUND THEN RETURN TRUE;
    ELSE RETURN FALSE;
@@ -175,5 +168,104 @@ BEGIN
    IF FOUND THEN RETURN TRUE;
    ELSE RETURN FALSE;
    END IF;
+END
+$func$ LANGUAGE plpgsql;
+
+
+
+CREATE FUNCTION FlightStatistics()
+  RETURNS TABLE ( Id INT
+                , Active BOOLEAN
+                , FreeN BIGINT
+                , ReservedN BIGINT
+                , SoldN BIGINT) AS
+$func$
+BEGIN
+    RETURN QUERY (
+        SELECT
+          f.FlightId
+          , NOT f.SoldOut
+          , (SELECT COUNT(*)
+             FROM PurchaseAvailable
+             WHERE FlightId = f.FlightId
+             ) AS FreeN
+          , (SELECT COUNT(*)
+             FROM ValidFlights NATURAL JOIN Flights NATURAL JOIN Tickets
+             WHERE NOT IsPaid AND
+                   (Expiration IS NOT NULL AND
+                    now() < Expiration AND
+                    Expiration < FlightTime) AND
+                   FlightId = f.FlightId
+             ) AS ReservedN
+          , (SELECT COUNT(*)
+             FROM ValidFlights NATURAL JOIN Flights NATURAL JOIN Tickets
+             WHERE IsPaid AND FlightId = f.FlightId
+             ) AS SoldN
+          FROM Flights AS f);
+END
+$func$ LANGUAGE plpgsql;
+
+
+CREATE FUNCTION CompressSeats() RETURNS VOID AS
+$func$
+DECLARE
+  flight Flights%rowtype;
+  ticket Tickets%rowtype;
+-- https://www.postgresql.org/docs/current/static/plpgsql-structure.html
+-- Body will run in transaction so we don't need any extra locks
+BEGIN
+    FOR flight IN (SELECT FlightId FROM ValidFlights) LOOP
+
+        CREATE TEMPORARY TABLE TicketsNew (
+            UserId int NOT NULL,
+            FlightId int NOT NULL,
+            SeatId serial NOT NULL,
+            FormerSeatId int NOT NULL,
+            Expiration timestamp,
+            IsPaid boolean NOT NULL DEFAULT False,
+
+            PRIMARY KEY (UserId, FlightId, SeatId),
+            UNIQUE(FlightId, SeatId)
+        );
+        -- start with seat 1 (not that important though)
+        ALTER SEQUENCE TicketsNew_seatid_seq RESTART WITH 1;
+
+        -- Aggrgegate all sold tickets
+        FOR ticket
+        IN (SELECT *
+            FROM Tickets
+            WHERE IsPaid AND FlightId = flight.FlightId)
+        LOOP
+            INSERT INTO TicketsNew (UserId,FlightId,FormerSeatId,Expiration,IsPaid)
+                VALUES (ticket.UserId, ticket.FlightId, ticket.SeatId, ticket.Expiration, ticket.IsPaid);
+        END LOOP;
+
+        -- Aggrgegate all reserved tickets
+        FOR ticket
+        IN (SELECT *
+            FROM Tickets
+            WHERE NOT IsPaid AND
+                  FlightId = flight.FlightId AND
+                  (Expiration IS NOT NULL AND
+                   now() < Expiration AND
+                   Expiration < flight.FlightTime))
+        LOOP
+            INSERT INTO TicketsNew (UserId,FlightId,FormerSeatId,Expiration,IsPaid)
+                VALUES (ticket.UserId, ticket.FlightId, ticket.SeatId, ticket.Expiration, ticket.IsPaid);
+        END LOOP;
+
+        -- Remove all tickets from real table that we've added to temp
+        -- table.
+        DELETE FROM Tickets
+        WHERE (UserId, FlightId, SeatId)
+        IN (SELECT UserId,FlightId,FormerSeatId FROM TicketsNew);
+
+        -- Put updated data
+        INSERT INTO Tickets
+        SELECT UserId,FlightId,SeatId,Expiration,IsPaid FROM TicketsNew;
+
+        DROP TABLE TicketsNew;
+    END LOOP;
+    RETURN;
 END
 $func$ LANGUAGE plpgsql;
