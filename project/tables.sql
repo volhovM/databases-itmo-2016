@@ -1,6 +1,7 @@
 CREATE DOMAIN HASH256 AS BYTEA CHECK (octet_length(VALUE) = 32);
 CREATE DOMAIN HASH160 AS BYTEA CHECK (octet_length(VALUE) = 20);
 CREATE DOMAIN SIG256 AS BYTEA CHECK (octet_length(VALUE) = 32);
+CREATE TYPE BUILDSTATUS AS ENUM ('PLANNED','IN PROGRESS', 'SUCCESS', 'FAIL');
 
 CREATE TABLE RegisteredUser (
   UserId SERIAL NOT NULL PRIMARY KEY,
@@ -40,38 +41,53 @@ CREATE TABLE Package (
 );
 
 CREATE TABLE Version (
+  -- General descriptions
   VersionId SERIAL NOT NULL PRIMARY KEY,
-  -- Version literal
-  VersionL VARCHAR(15) NOT NULL,
-  -- Category list: a,b,c,d
-  Category VARCHAR(50) NOT NULL,
-  -- Source URL
-  VSource TEXT NOT NULL,
-  VPackage SERIAL NOT NULL
+  VersionL VARCHAR(15) NOT NULL, -- Version literal
+  Category VARCHAR(50) NOT NULL, -- Category list: a,b,c,d
+  VSource TEXT NOT NULL, -- Source URL
+  VPackage SERIAL NOT NULL,
+
+  -- Upload-related
+  Uploader SERIAL NOT NULL,
+  UploadSign HASH256,
+  UploadTime TIMESTAMP NOT NULL
 );
 
--- CREATE TABLE SshKey (
---     SshPubKey text NOT NULL PRIMARY KEY,
---     SeatNum int NOT NULL
--- );
---
--- CREATE TABLE Flights(
---   FlightId int NOT NULL PRIMARY KEY,
---   FlightTime timestamp NOT NULL,
---   PlaneId int NOT NULL,
---   SoldOut boolean NOT NULL,
---
---   FOREIGN KEY (PlaneId) REFERENCES Seats(PlaneId) ON DELETE CASCADE
--- );
---
--- CREATE TABLE Tickets(
---     UserId int NOT NULL,
---     FlightId int NOT NULL,
---     SeatId int NOT NULL,
---     Expiration timestamp,
---     IsPaid boolean NOT NULL DEFAULT False,
---
---     PRIMARY KEY (UserId, FlightId, SeatId),
---     FOREIGN KEY (FlightId) REFERENCES Flights(FlightId) ON DELETE CASCADE,
---     UNIQUE(FlightId, SeatId) -- место не может быть продано/забронировано дважды
--- );
+CREATE TABLE Dependencies (
+  DepChild SERIAL NOT NULL,
+  DepParent SERIAL NOT NULL,
+
+  PRIMARY KEY (DepChild, DepParent)
+);
+
+CREATE TABLE Snapshot (
+  SnapshotId SERIAL NOT NULL PRIMARY KEY,
+  SnapshotName VARCHAR(20) NOT NULL, -- mnemonic (lts-5.9, nigthly-2017.01.06)
+  SnapshotSuccess BOOL NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE SnapshotVersions (
+  SVSnapshot SERIAL NOT NULL,
+  SVVersion SERIAL NOT NULL,
+
+  PRIMARY KEY (SVSnapshot, SVVersion)
+);
+
+CREATE TABLE Build (
+  BuildId SERIAL NOT NULL PRIMARY KEY,
+  BuildStatus BUILDSTATUS NOT NULL,
+  TimeStarted TIMESTAMP NOT NULL, -- means "planned time to start" if "planned"
+  TimeFinished TIMESTAMP,
+  WorkDirectory TEXT,
+  BuildVersion SERIAL NOT NULL
+);
+
+CREATE TABLE Downloads (
+  DownloadId SERIAL NOT NULL PRIMARY KEY,
+  DTime TIMESTAMP NOT NULL,
+  DIp VARCHAR(15),
+  DBrowser VARCHAR(4),
+  DVersion SERIAL NOT NULL,
+  DBinaryBuild SERIAL
+);
