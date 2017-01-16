@@ -1,0 +1,35 @@
+INSERT INTO Package VALUES
+    (0, 'egison','http://hagi.is.s.u-tokyo.ac.jp/~egi/egison/','MIT','Satoshi Egi',2, True, True, True, True),
+    (1, 'timeplot','http://haskell.org/haskellwiki/Timeplot','BSD3','Eugene Kirpichov <ekirpichov@gmail.com>',5, True, True, True, True),
+    (2, 'sbv','http://leventerkok.github.com/sbv/','BSD3','Levent Erkok',6, True, False, True, True),
+    (3, 'HTTP','http://www.haskell.org/http/','BSD3','Warrick Gray <warrick.gray@hotmail.com>',9, True, True, False, True),
+    (4, 'conduit','http://github.com/snoyberg/conduit','BSD3','Michael Snoyman',12, True, True, True, True),
+    (5, 'hledger-web','http://hledger.org','GPL Nothing','Simon Michael <simon@joyful.com>',15, True, False, True, True),
+    (6, 'resourcet','http://github.com/snoyberg/conduit','BSD3','Michael Snoyman',18, False, True, True, True),
+    (7, 'shakespeare','http://www.yesodweb.com/book/templates','BSD3','Michael Snoyman <michael@snoyman.com>',21, True, True, True, True),
+    (8, 'relational-query','http://twitter.com/khibino','BSD3','Kei Hibino',24, True, True, True, True),
+    (9, 'hledger','http://joyful.com/hledger','GPL Nothing','Simon Michael <simon@joyful.com>',27, True, True, True, True),
+    (10, 'lens','http://github.com/ekmett/lens/','BSD3','Edward A. Kmett',30, True, True, True, True),
+    (11, 'containers','','BSD3','',33, True, True, True, True),
+    (12, 'scientific','https://github.com/basvandijk/scientific','BSD3','Bas van Dijk',36, True, True, True, True),
+    (13, 'cblrepo','','OtherLicense','Magnus Therning',39, True, True, True, True),
+    (14, 'aeson','http://github.com/mailrank/aeson','BSD3','Bryan OSullivan <bos@mailrank.com>',42, True, True, True, True),
+    (15, 'semigroupoids','http://github.com/ekmett/semigroupoids','BSD3','Edward A. Kmett',45, True, True, True, True),
+    (16, 'persistent-template','http://www.yesodweb.com/','BSD3','Michael Snoyman <michael@snoyman.com>',48, True, True, True, True),
+    (17, 'text','','BSD3','Tom Harper <rtharper@aftereternity.co.uk>',51, True, True, True, True),
+    (18, 'http-client','https://github.com/snoyberg/http-client','MIT','Michael Snoyman',54, True, True, True, True),
+    (19, 'Cabal','http://www.haskell.org/cabal/','BSD3','Isaac Jones <ijones@syntaxpolice.org>',57, True, True, True, True),
+    (20, 'base','','BSD3','',60, True, True, True, True),
+    (21, 'haskell-src-meta','','BSD3','Matt Morrow',63, True, True, True, True),
+    (22, 'scotty','https://github.com/scotty-web/scotty','BSD3','Andrew Farmer <afarmer@ittc.ku.edu>',66, True, True, True, True),
+    (23, 'diagrams-contrib','http://projects.haskell.org/diagrams/','BSD3','Various',69, True, True, True, True),
+    (24, 'pandoc','http://sophos.berkeley.edu/macfarlane/pandoc','GPL Nothing','John MacFarlane <jgm@berkeley.edu>',72, True, True, True, True),
+    (25, 'wai-routes','https://github.com/ajnsit/wai-routes','MIT','Anupam Jain',75, True, True, True, True),
+    (26, 'cuda','','BSD3','Trevor L. McDonell <tmcdonell@cse.unsw.edu.au>',78, False, True, True, True),
+    (27, 'type-natural','https://github.com/konn/type-natural','BSD3','Hiromi ISHII',81, True, True, True, True),
+    (28, 'cabal-install','','BSD3','Lemmih <lemmih@gmail.com>
+Paolo Martini <paolo@nemail.it>
+Bjorn Bringert <bjorn@bringert.net>
+Isaac Potoczny-Jones <ijones@syntaxpolice.org>
+Duncan Coutts <duncan@haskell.org>',84, True, True, True, True),
+    (29, 'attoparsec','','BSD3','Bryan OSullivan <bos@serpentine.com>',87, True, True, True, True);

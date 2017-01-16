@@ -12,6 +12,7 @@
 module Main where
 
 
+import           Control.Concurrent.Async.Lifted       (mapConcurrently)
 import           Control.Lens                          (view, _1, _2, _3, _4)
 import           Control.Monad                         (forM_, guard, replicateM, when)
 import           Control.Monad.Trans                   (lift)
@@ -24,6 +25,7 @@ import           Data.Aeson.TH                         (Options (..), defaultOpt
 import           Data.Aeson.Types                      (typeMismatch)
 import qualified Data.ByteString                       as BS
 import qualified Data.ByteString.Lazy                  as BSL
+import           Data.Char                             (isSpace)
 import           Data.List                             (isSuffixOf, nub)
 import           Data.Map                              ((!))
 import qualified Data.Map                              as M
@@ -35,7 +37,8 @@ import qualified Data.Text                             as T
 import           Data.Text.Encoding                    (encodeUtf8)
 import qualified Data.Text.IO                          as TIO
 import           Data.Time                             (UTCTime)
-import           Data.Time.Format                      (defaultTimeLocale, parseTimeM)
+import           Data.Time.Format                      (defaultTimeLocale, formatTime,
+                                                        parseTimeM)
 import           Data.Version                          (Version (..), parseVersion,
                                                         showVersion)
 import           Distribution.License                  (License (..))
@@ -116,7 +119,7 @@ anyDep (VersionRangeParens vr)         = anyDep vr
 parseCabal x =
     case parsePackageDescription x of
         ParseFailed _ -> Nothing
-        ParseOk [] GenericPackageDescription {..} ->
+        ParseOk _ GenericPackageDescription {..} ->
             let PackageDescription {..} = packageDescription
                 libDeps = concat $ maybe [] fromCondTree condLibrary
                 libExe = concat $ concatMap (fromCondTree . snd) condExecutables
@@ -124,7 +127,7 @@ parseCabal x =
             in Just $
                ( T.pack $ show license
                , T.pack homepage
-               , T.pack author
+               , T.replace "'" "" $ T.pack author
                , T.pack category
                , concatMap (\(Dependency p vr) -> map (T.pack $ unPackageName p,) $ anyDep vr) $
                  libDeps ++ libExe ++ libTest)
@@ -148,6 +151,7 @@ data OutputVersion = OutputVersion
     , ovCategory :: Text
     , ovUploaded :: UTCTime
     , ovUploader :: Text
+    , ovSign     :: Maybe Text
     , ovDeps     :: [(Text, Version)]
     } deriving (Show, Eq, Ord)
 
@@ -157,8 +161,9 @@ data OutputPackage = OutputPackage
     , oLicense           :: Text
     , oAuthor            :: Text
     , oVersions          :: [OutputVersion]
-    , oNotifyUploader    :: Bool
+    , oMaintainers       :: [Int]
     , oNotifyMaintainers :: Bool
+    , oNotifyUploader    :: Bool
     , oDeprecated        :: Bool
     , oPrivate           :: Bool
     } deriving (Show,Eq,Ord)
@@ -166,6 +171,9 @@ data OutputPackage = OutputPackage
 ----------------------------------------------------------------------------
 -- SQL generation
 ----------------------------------------------------------------------------
+
+formatUTCPostgres :: UTCTime -> Text
+formatUTCPostgres = T.pack . formatTime defaultTimeLocale "%F %T"
 
 insertUsers :: [OutputUser] -> IO ()
 insertUsers !users = do
@@ -200,8 +208,76 @@ insertUsers !users = do
     TIO.writeFile "realdata_gpg.sql" insertGpg
     putStrLn "dumping done"
 
-insertPackages :: [OutputPackage] -> IO ()
-insertPackages = undefined
+insertPackages :: [OutputUser] -> [OutputPackage] -> IO ()
+insertPackages users packages = do
+    let zippedPackages = packages `zip` [0..]
+        zippedVersions :: [((Int, OutputVersion), Int)]
+        zippedVersions =
+            (concatMap (\(o,i) -> map (i, ) $ oVersions o) zippedPackages) `zip` [0..]
+        packagesToVersion :: M.Map Int Int
+        packagesToVersion = M.fromList $ map (\((pId,_), vId) -> (pId, vId)) zippedVersions
+        uploaderMap :: M.Map Text Int
+        uploaderMap = M.fromList $ map (\OutputUser{..} -> (ouLogin, ouId)) users
+        resolvePackage :: M.Map Text Int -- pName -> pId
+        resolvePackage = M.fromList $ map (\(p,pId) -> (oPackageName p,pId)) zippedPackages
+        resolveVersion :: M.Map (Int,Version) Int -- (pId,version) -> vId
+        resolveVersion =
+            M.fromList $
+            map (\((pId,OutputVersion{..}), vId) -> ((pId,ovVersion), vId)) zippedVersions
+
+    putStrLn "dumping packages"
+    let show' :: forall a . (Show a) => a -> Text
+        show' = T.pack . show
+    let pre1 = "INSERT INTO Package VALUES\n"
+        row1 :: (OutputPackage, Int) -> Text
+        row1 (OutputPackage{..}, pId) =
+            mconcat ["    (", show' pId
+                    , ", '", oPackageName
+                    , "','", oSite
+                    , "','", oLicense
+                    , "','", oAuthor
+                    , "',",  show' (packagesToVersion ! pId)
+                    , ", ", show' oNotifyMaintainers
+                    , ", ", show' oNotifyUploader
+                    , ", ", show' oDeprecated
+                    , ", ", show' oPrivate, ")"]
+        insertPackages = pre1 <> T.intercalate ",\n" (map row1 zippedPackages) <> ";"
+    TIO.writeFile "realdata_packages.sql" insertPackages
+
+    putStrLn "dumping versions"
+    let maybeNull = fromMaybe "null"
+    let pre2 = "INSERT INTO Version VALUES\n"
+        row2 ((pId,OutputVersion{..}), vId) =
+            mconcat [ "    (", show' vId
+                    , ", '", T.pack (showVersion ovVersion)
+                    , "', '", ovCategory
+                    , "', ", show' pId
+                    , ", ", show' (fromMaybe 0 $ ovUploader `M.lookup` uploaderMap )
+                    , ", ", (maybeNull $ (\s -> "decode('"<>s<>"', 'base64')") <$> ovSign)
+                    , ", '", formatUTCPostgres ovUploaded, "')"
+                    ]
+        insertVersions = pre2 <> T.intercalate ",\n" (map row2 zippedVersions) <> ";"
+    TIO.writeFile "realdata_versions.sql" insertVersions
+
+    putStrLn "dumping maintainers"
+    let pre3 = "INSERT INTO Maintainers VALUES\n"
+        row3 (OutputPackage{..}, pId) =
+            flip map oMaintainers $ \mId ->
+                mconcat [ "    (", show' mId, ", ", show' pId, ")"]
+        insertMaintainers = pre3 <> T.intercalate ",\n" (concatMap row3 zippedPackages) <> ";"
+    TIO.writeFile "realdata_maintainers.sql" insertMaintainers
+
+    putStrLn "dumping dependencies"
+    let pre4 = "INSERT INTO Dependencies VALUES\n"
+        row4Trans ((pId,OutputVersion{..}),vId) =
+            flip map ovDeps $ \(pName,vers) ->
+                let dPId = resolvePackage ! pName
+                    dVId = resolveVersion ! (dPId,vers)
+                in (vId, dVId)
+        row4 (vId, dVId) = mconcat [ "    (", show' vId, ",", show' dVId, ")"]
+        insertDeps =
+            pre4 <> T.intercalate ",\n" (map row4 $ nub $ concatMap row4Trans zippedVersions) <> ";"
+    TIO.writeFile "realdata_deps.sql" insertDeps
 
 ----------------------------------------------------------------------------
 -- Main
@@ -247,7 +323,7 @@ main = do
     --(packages :: [Package]) <- getResponseBodyData "packages/"
     let packages = map Package topHackagePackages
     putStrLn $ "total packages on hackage: " ++ show (length packages)
-    outputPackages <- flip mapM (take 20 packages) $ \p@(Package oPackageName) -> runMaybeT $ do
+    outputPackages <- flip mapM (take 30 packages) $ \p@(Package oPackageName) -> runMaybeT $ do
         let pname = T.unpack oPackageName
         (Versions versions) <-
             lift $ getResponseBodyData $ "package/" ++ pname ++ "/preferred"
@@ -258,18 +334,15 @@ main = do
 
         (Maintainers maintainers) <-
             lift $ getResponseBodyData $ "package/" ++ pname ++ "/maintainers/"
+        let oMaintainers = map user_userid maintainers
 
-        outputVersions <- flip mapM versions' $ \ovVersion -> lift $ runMaybeT $ do
+        outputVersions <- forConcurrently versions' $ \ovVersion -> lift $ runMaybeT $ do
             let versS = showVersion ovVersion
                 urlPrefix = "package/" ++ pname ++ "-" ++ versS ++ "/"
             uploadTimeRaw <-
                 lift $
                 getResponseBodyT =<<
                 simpleHTTP (getRequestJSON $ urlPrefix ++ "upload-time")
---            lift $ print version
---            lift $ print versS
---            lift $ print urlPrefix
---            lift $ print uploadTimeRaw
             ovUploaded <- MaybeT $ pure $ parseUTCTime uploadTimeRaw
 
             ovUploader <-
@@ -283,6 +356,8 @@ main = do
                 simpleHTTP (getRequestJSON $ urlPrefix ++ pname ++ ".cabal")
             cabal@(ovLicense, ovHomepage, ovAuthor, ovCategory, ovDeps) <-
                 MaybeT $ pure $ parseCabal $ T.unpack cabalFile
+            sign <- lift $ randomB64 32
+            ovSign <- lift $ withProb (1/15) (Just sign) Nothing
             pure $ (OutputVersion{..}, ovAuthor, ovHomepage, ovLicense)
         let outputVersions' = catMaybes outputVersions
         guard $ not $ null outputVersions'
@@ -302,4 +377,5 @@ main = do
     let justsPackages = catMaybes outputPackages
     putStrLn $ "total packages: " ++ show (length justsPackages)
     normalized <- normalizePackages justsPackages
+    insertPackages outputUsers normalized
     print "done"

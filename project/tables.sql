@@ -29,23 +29,28 @@ CREATE TABLE Package (
   PName VARCHAR(20) NOT NULL,
   PSite VARCHAR(70) NOT NULL,
   PLicense VARCHAR(20) NOT NULL,
-  Author SERIAL NOT NULL,
+  Author TEXT NOT NULL,
   LastVersion SERIAL NOT NULL,
 
   -- Options zone
-  NotifyAuthor BOOL NOT NULL DEFAULT FALSE,
   NotifyMaintainers BOOL NOT NULL DEFAULT TRUE,
-  NotifyUploaders BOOL NOT NULL DEFAULT TRUE,
+  NotifyUploader BOOL NOT NULL DEFAULT TRUE,
   PDepricated BOOL NOT NULL DEFAULT FALSE,
   PPrivate BOOL NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE Maintainers (
+  MaintUser SERIAL NOT NULL,
+  MaintPackage SERIAL NOT NULL,
+
+  PRIMARY KEY (MaintUser,MaintPackage)
 );
 
 CREATE TABLE Version (
   -- General descriptions
   VersionId SERIAL NOT NULL PRIMARY KEY,
   VersionL VARCHAR(15) NOT NULL, -- Version literal
-  Category VARCHAR(50) NOT NULL, -- Category list: a,b,c,d
-  VSource TEXT NOT NULL, -- Source URL
+  Category TEXT NOT NULL, -- Category list: a,b,c,d
   VPackage SERIAL NOT NULL,
 
   -- Upload-related
@@ -55,8 +60,8 @@ CREATE TABLE Version (
 );
 
 CREATE TABLE Dependencies (
+  DepParent SERIAL NOT NULL,  -- depends on children
   DepChild SERIAL NOT NULL,
-  DepParent SERIAL NOT NULL,
 
   PRIMARY KEY (DepChild, DepParent)
 );
