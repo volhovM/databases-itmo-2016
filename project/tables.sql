@@ -5,9 +5,9 @@ CREATE TYPE BUILDSTATUS AS ENUM ('PENDING','IN PROGRESS', 'SUCCESS', 'FAIL');
 
 CREATE TABLE RegisteredUser (
   UserId SERIAL NOT NULL PRIMARY KEY,
-  UserLogin VARCHAR(20) NOT NULL,
-  UserName VARCHAR(40) NOT NULL,
-  Email VARCHAR(20) NOT NULL,
+  UserLogin VARCHAR(30) NOT NULL,
+  UserName VARCHAR(45) NOT NULL,
+  Email VARCHAR(50) NOT NULL,
   PassHash HASH256 NOT NULL
 );
 
@@ -19,8 +19,8 @@ CREATE TABLE SshKey (
 
 CREATE TABLE GpgKey (
   GpgOwner SERIAL NOT NULL PRIMARY KEY,
-  GpgSignature SIG256 NOT NULL,
-  GpgPublicKeyId HASH256 NOT NULL -- Gpg PublicKey id ~ fingerprint
+  GpgPublicKeyId HASH160 NOT NULL, -- Gpg PublicKey id ~ fingerprint
+  GpgSignature SIG256 NOT NULL
 );
 
 CREATE TABLE Package (
