@@ -12,7 +12,7 @@
 module Main where
 
 
-import           Control.Concurrent.Async.Lifted       (mapConcurrently)
+import           Control.Concurrent.Async.Lifted       (forConcurrently)
 import           Control.Lens                          (view, _1, _2, _3, _4)
 import           Control.Monad                         (forM_, guard, replicateM, when)
 import           Control.Monad.Trans                   (lift)
@@ -56,6 +56,7 @@ import           Network.HTTP                          (HeaderName (..), Request
 import qualified Network.HTTP                          as HTTP
 import           Network.URI                           (parseURI)
 import           System.Random                         (randomRIO)
+import           System.Random.Shuffle                 (shuffleM)
 import           Text.ParserCombinators.ReadP          (readP_to_S)
 
 import           ParserExtra
@@ -125,7 +126,7 @@ parseCabal x =
                 libExe = concat $ concatMap (fromCondTree . snd) condExecutables
                 libTest = concat $ concatMap (fromCondTree . snd) condTestSuites
             in Just $
-               ( T.pack $ show license
+               ( T.pack $ takeWhile (not . isSpace) $ show license
                , T.pack homepage
                , T.replace "'" "" $ T.pack author
                , T.pack category
@@ -137,36 +138,49 @@ parseCabal x =
 ----------------------------------------------------------------------------
 
 data OutputUser = OutputUser
-    { ouLogin    :: Text
-    , ouId       :: Int
-    , ouName     :: Text
-    , ouEmail    :: Text
-    , ouPassHash :: Text
-    , ouGpgKey   :: Maybe (Text, Text) -- (pkid28, sig44)
-    , ouSshKeys  :: [Text] -- Text
+    { ouLogin    :: !Text
+    , ouId       :: !Int
+    , ouName     :: !Text
+    , ouEmail    :: !Text
+    , ouPassHash :: !Text
+    , ouGpgKey   :: !(Maybe (Text, Text)) -- (pkid28, sig44)
+    , ouSshKeys  :: ![Text] -- Text
     } deriving (Show, Eq, Ord)
 
 data OutputVersion = OutputVersion
-    { ovVersion  :: Version
-    , ovCategory :: Text
-    , ovUploaded :: UTCTime
-    , ovUploader :: Text
-    , ovSign     :: Maybe Text
-    , ovDeps     :: [(Text, Version)]
+    { ovVersion  :: !Version
+    , ovCategory :: !Text
+    , ovUploaded :: !UTCTime
+    , ovUploader :: !Text
+    , ovSign     :: !(Maybe Text)
+    , ovDeps     :: ![(Text, Version)]
     } deriving (Show, Eq, Ord)
 
 data OutputPackage = OutputPackage
-    { oPackageName       :: Text
-    , oSite              :: Text
-    , oLicense           :: Text
-    , oAuthor            :: Text
-    , oVersions          :: [OutputVersion]
-    , oMaintainers       :: [Int]
-    , oNotifyMaintainers :: Bool
-    , oNotifyUploader    :: Bool
-    , oDeprecated        :: Bool
-    , oPrivate           :: Bool
+    { oPackageName       :: !Text
+    , oSite              :: !Text
+    , oLicense           :: !Text
+    , oAuthor            :: !Text
+    , oVersions          :: ![OutputVersion]
+    , oMaintainers       :: ![Int]
+    , oNotifyMaintainers :: !Bool
+    , oNotifyUploader    :: !Bool
+    , oDeprecated        :: !Bool
+    , oPrivate           :: !Bool
     } deriving (Show,Eq,Ord)
+
+data OutputSnapshot = OutputSnapshot
+    { osVersions :: ![Int]
+    , osName     :: !Text
+    , osId       :: !Int
+    } deriving Show
+
+data OutputDownload = OutputDownload
+    { odIp      :: Text
+    , odTime    :: UTCTime
+    , odBrowser :: Text
+    , odVersion :: Int
+    } deriving Show
 
 ----------------------------------------------------------------------------
 -- SQL generation
@@ -226,8 +240,6 @@ insertPackages users packages = do
             map (\((pId,OutputVersion{..}), vId) -> ((pId,ovVersion), vId)) zippedVersions
 
     putStrLn "dumping packages"
-    let show' :: forall a . (Show a) => a -> Text
-        show' = T.pack . show
     let pre1 = "INSERT INTO Package VALUES\n"
         row1 :: (OutputPackage, Int) -> Text
         row1 (OutputPackage{..}, pId) =
@@ -279,6 +291,39 @@ insertPackages users packages = do
             pre4 <> T.intercalate ",\n" (map row4 $ nub $ concatMap row4Trans zippedVersions) <> ";"
     TIO.writeFile "realdata_deps.sql" insertDeps
 
+insertSnapshots :: [OutputSnapshot] -> IO ()
+insertSnapshots snapshots = do
+    putStrLn "dumping snapshots"
+    let pre1 = "INSERT INTO Snapshot (SnapshotId, SnapshotName) VALUES\n"
+        row1 OutputSnapshot{..} = mconcat [ "    (", show' osId, ",'", osName, "')"]
+        insertDeps =
+            pre1 <> T.intercalate ",\n" (map row1 snapshots) <> ";"
+    TIO.writeFile "realdata_snapshots.sql" insertDeps
+
+    putStrLn "dumping snapshot versions"
+    let pre2 = "INSERT INTO SnapshotVersions (SVSnapshot, SVVersion) VALUES\n"
+        row2 OutputSnapshot{..} =
+            flip map osVersions $ \vId ->
+            mconcat [ "    (", show' osId, ",", show' vId, ")"]
+        insertDeps =
+            pre2 <> T.intercalate ",\n" (concatMap row2 snapshots) <> ";"
+    TIO.writeFile "realdata_snapshot_versions.sql" insertDeps
+
+insertDownloads :: [OutputDownload] -> IO ()
+insertDownloads downloads = do
+    putStrLn "dumping downloads"
+    let pre1 = "INSERT INTO Downloads (DTime, DIp, DBrowser, DVersion) VALUES\n"
+        row1 OutputDownload{..} =
+            mconcat [ "    ('", formatUTCPostgres odTime
+                    , "', '", odIp
+                    , "', '", odBrowser
+                    , "', ", show' odVersion, ")"]
+        insertDeps =
+            pre1 <> T.intercalate ",\n" (map row1 downloads) <> ";"
+    TIO.writeFile "realdata_downloads.sql" insertDeps
+
+
+
 ----------------------------------------------------------------------------
 -- Main
 ----------------------------------------------------------------------------
@@ -323,13 +368,13 @@ main = do
     --(packages :: [Package]) <- getResponseBodyData "packages/"
     let packages = map Package topHackagePackages
     putStrLn $ "total packages on hackage: " ++ show (length packages)
-    outputPackages <- flip mapM (take 30 packages) $ \p@(Package oPackageName) -> runMaybeT $ do
+    outputPackages <- flip mapM (take 200 packages) $ \p@(Package oPackageName) -> runMaybeT $ do
         let pname = T.unpack oPackageName
         (Versions versions) <-
             lift $ getResponseBodyData $ "package/" ++ pname ++ "/preferred"
         let takeLast n xs = drop (length xs - n) xs
         let (versions' :: [Version]) =
-                takeLast 3 $
+                takeLast 4 $
                 map (\v -> fst $ last $ readP_to_S parseVersion v) versions
 
         (Maintainers maintainers) <-
@@ -369,8 +414,8 @@ main = do
 
         oNotifyUploader <- lift $ withProb (1/20) False True
         oNotifyMaintainers <- lift $ withProb (1/10) False True
-        oDeprecated <- lift $ withProb (1/80) False True
-        oPrivate <- lift $ withProb (1/125) False True
+        oDeprecated <- lift $ withProb (1/80) True False
+        oPrivate <- lift $ withProb (1/125) True False
 
         pure $ OutputPackage{..}
 
@@ -378,4 +423,35 @@ main = do
     putStrLn $ "total packages: " ++ show (length justsPackages)
     normalized <- normalizePackages justsPackages
     insertPackages outputUsers normalized
+
+    let zippedPackages = normalized `zip` [0..]
+        zippedVersions :: [((Int, OutputVersion), Int)]
+        zippedVersions =
+            (concatMap (\(o,i) -> map (i, ) $ oVersions o) zippedPackages) `zip` [0..]
+        resolveVersion :: M.Map (Int,Version) Int -- (pId,version) -> vId
+        resolveVersion =
+            M.fromList $
+            map (\((pId,OutputVersion{..}), vId) -> ((pId,ovVersion), vId)) zippedVersions
+
+    snapshots <- flip mapM [0..6] $ \osId -> do
+        shuffled <- shuffleM zippedPackages
+        let osName = T.pack $ "nightly-" <> show osId
+        let chosenPackages = take (length shuffled `div` 2) shuffled
+        osVersions <- flip mapM chosenPackages $ \(OutputPackage{..}, pId) -> do
+             oVersionI <- randomRIO (0, length oVersions - 1)
+             let vers = ovVersion $ oVersions !! oVersionI
+             let vId = resolveVersion ! (pId,vers)
+             pure vId
+        pure $ OutputSnapshot {..}
+    insertSnapshots snapshots
+
+    downloads <- flip mapM zippedVersions $ \((pId,OutputVersion{..}),vId) -> do
+        downloadTimes <- ceiling . (** 0.4) <$> randomRIO (0::Double, 100000.0)
+        let odVersion = vId
+        replicateM downloadTimes $ do
+            odBrowser <- randomBrowser
+            odIp <- randomIP
+            odTime <- randomUTCTime
+            pure $ OutputDownload{..}
+    insertDownloads $ concat downloads
     print "done"

@@ -1,4 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE RankNTypes          #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 -- | Splices
 
 module ParserExtra
@@ -7,6 +9,10 @@ module ParserExtra
        , randomB64
        , withProb
        , randomEmail
+       , randomIP
+       , randomUTCTime
+       , show'
+       , randomBrowser
        , allNamesSurnames
        , topHackagePackages
        ) where
@@ -20,6 +26,7 @@ import           Data.Monoid            ((<>))
 import           Data.Text              (Text)
 import qualified Data.Text              as T
 import           Data.Text.Encoding     (decodeUtf8)
+import           Data.Time              (UTCTime (..), fromGregorian)
 import           System.Random          (randomIO, randomRIO)
 
 customOptions = defaultOptions {
@@ -34,10 +41,37 @@ withProb prob x y = do
     z <- randomRIO (0, 1 :: Double)
     pure $ if z < prob then x else y
 
+randomIP :: IO Text
+randomIP =
+    let r = [0,5,43,60,39,63,255,32,128,127,64::Int]
+    in oneOf [T.intercalate "." $ map show' [a,b,c,d] | a <- r, b <- r, c <- r, d <- r]
+
 randomSSH :: Text -> IO Text
 randomSSH email = do
     key <- randomB64 256
     pure $ "ssh-rsa " <> key <> " " <> email
+
+show' :: forall a . (Show a) => a -> Text
+show' = T.pack . show
+
+randomUTCTime = do
+    (randomDay::Int) <- randomRIO (1, 29)
+    (randomMonth::Int) <- randomRIO (1, 12)
+    (randomYear::Integer) <- randomRIO (2014, 2016)
+    (randomTime::Int) <- randomRIO (0, 83000)
+    pure $ UTCTime (fromGregorian randomYear randomMonth randomDay) (fromIntegral randomTime)
+
+oneOf :: [a] -> IO a
+oneOf xs = (xs !!) <$> randomRIO (0, length xs - 1)
+
+randomBrowser :: IO Text
+randomBrowser = oneOf browsers
+  where
+    browsers = [b <> " " <> show' v1 <> "." <> show' v2
+               | b <- bSoft, v1 <- versions, v2 <- versions]
+    versions = [0..15::Int]
+    bSoft = ["safari", "chromium", "firefox", "vimprobable", "opera"]
+
 
 -- random 64 of given byte length
 randomB64 :: Int -> IO Text
@@ -45,10 +79,11 @@ randomB64 length = do
     randomBS <- BS.pack <$> replicateM length randomIO
     pure $ decodeUtf8 $ B64.encode randomBS
 
+
 randomEmail :: Text -> IO Text
 randomEmail prefix = do
-    i <- randomRIO (0, length suffixes - 1)
-    pure $ prefix <> "@" <> suffixes !! i
+    suffix <- oneOf suffixes
+    pure $ prefix <> "@" <>  suffix
   where
     suffixes = ["gmail.com", "mail.ru", "yandex.ru", "yahoo.com", "tempmail.com", "extramail.com", "list.com"]
 
