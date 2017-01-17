@@ -1,20 +1,21 @@
 ------ CONSTRAINTS ------
 
 ALTER TABLE RegisteredUser ADD CONSTRAINT UN_RegisteredUser_UserLogin UNIQUE(UserLogin);
+ALTER TABLE RegisteredUser ADD CONSTRAINT UN_RegisteredUser_Email UNIQUE(Email);
 ALTER TABLE SshKey ADD CONSTRAINT FK_SshKey_UserId
   FOREIGN KEY (SshOwner) REFERENCES RegisteredUser(UserId) ON DELETE CASCADE;
 ALTER TABLE GpgKey ADD CONSTRAINT FK_GpgKey_UserId
   FOREIGN KEY (GpgOwner) REFERENCES RegisteredUser(UserId) ON DELETE CASCADE;
 ALTER TABLE GpgKey ADD CONSTRAINT UN_GpgKey_GpgPublicKeyId UNIQUE(GpgPublicKeyId);
 ALTER TABLE Package ADD CONSTRAINT FK_LastVersion_VersionId
-  FOREIGN KEY (LastVersion) REFERENCES Version(VersionId) ON DELETE CASCADE;
+  FOREIGN KEY (LastVersion) REFERENCES Version(VersionId) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE Package ADD CONSTRAINT UN_Package_PackageName UNIQUE(PackageName);
 ALTER TABLE Maintainers ADD CONSTRAINT FK_MaintUser_UserId
   FOREIGN KEY (MaintUser) REFERENCES RegisteredUser(UserId) ON DELETE CASCADE;
 ALTER TABLE Maintainers ADD CONSTRAINT FK_MaintPackage_PackageId
   FOREIGN KEY (MaintPackage) REFERENCES Package(PackageId) ON DELETE CASCADE;
 ALTER TABLE Version ADD CONSTRAINT FK_VPackage_PackageId
-  FOREIGN KEY (VPackage) REFERENCES Package(PackageId) ON DELETE CASCADE;
+  FOREIGN KEY (VPackage) REFERENCES Package(PackageId) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE Version ADD CONSTRAINT FK_Uploader_UserId
   FOREIGN KEY (Uploader) REFERENCES RegisteredUser(UserId) ON DELETE CASCADE;
 ALTER TABLE Dependencies ADD CONSTRAINT FK_DepChild_VersionId
@@ -57,7 +58,7 @@ CREATE INDEX ON Downloads USING hash (DBinaryBuild);
 CREATE INDEX ON Downloads USING btree (DTime);
 
 
------- TRIGGERS ------
+------ PROCEDURES AND TRIGGERS ------
 
 CREATE FUNCTION check_build_state() RETURNS TRIGGER AS $$
 DECLARE
@@ -102,9 +103,37 @@ CREATE TRIGGER check_uploader_is_maintainer AFTER INSERT OR UPDATE ON Version
 CREATE FUNCTION auto_update_package_version() RETURNS TRIGGER AS $$
 BEGIN
   UPDATE Package SET LastVersion = NEW.VersionId WHERE PackageId = NEW.VPackage;
+  RAISE NOTICE 'Last version of package was automatically bumped.';
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER auto_update_package_version AFTER INSERT ON VERSION
+CREATE TRIGGER auto_update_package_version AFTER INSERT ON Version
   FOR EACH ROW EXECUTE PROCEDURE auto_update_package_version();
+
+-- \forall snapshot version exists build with this version and success tag
+-- \not exists snapshot version $ not exist build with this version and success tag
+CREATE FUNCTION set_snapshot_to_succeeded() RETURNS TRIGGER AS $$
+DECLARE
+  sid INTEGER;
+BEGIN
+  FOR sid IN
+     SELECT DISTINCT SVSnapshot
+     FROM SnapshotVersions
+     WHERE SVVersion = NEW.BuildVersion
+  LOOP
+      IF sid NOT IN (
+           SELECT SVSnapshot FROM SnapshotVersions
+           WHERE SVVersion NOT IN (
+             SELECT BuildVersion FROM Build WHERE BuildStatus = 'SUCCESS')) THEN
+        RAISE NOTICE 'Snapshot % is now successfully built', sid;
+        UPDATE Snapshot SET PassesBuild = True Where SnapshotId = sid;
+      END IF;
+  END LOOP;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_snapshot_to_succeeded AFTER INSERT OR UPDATE ON Build
+  FOR EACH ROW EXECUTE PROCEDURE set_snapshot_to_succeeded();

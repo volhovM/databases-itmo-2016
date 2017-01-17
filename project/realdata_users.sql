@@ -3546,4 +3546,5 @@ INSERT INTO RegisteredUser VALUES
   (3547, 'qzchenwl', 'James Ryan', 'qzchenwl@yahoo.com',decode('kSo7ZKYl9RWJcB4p92So8dyk5Ly4zbPcA4KsjHmiHUU=', 'base64')),
   (3548, 'HongchangWu', 'James Schmidt', 'HongchangWu@mail.ru',decode('Kx0dKygD27/CrKAYyvt7i/TTeZW24aGmo1qhiuR3tWg=', 'base64')),
   (3549, 'MicroTransactions', 'James Carr', 'MicroTransactions@list.com',decode('8dxqQKQtuu1CZal0A+xiLkU21pkERil9/YwRX19KN3E=', 'base64'));
-ALTER SEQUENCE registereduser_userid_seq RESTART WITH 3547;
+
+ALTER SEQUENCE registereduser_userid_seq RESTART WITH 3550;

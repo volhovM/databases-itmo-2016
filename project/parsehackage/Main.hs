@@ -441,7 +441,7 @@ main = do
             M.fromList $
             map (\((pId,OutputVersion{..}), vId) -> ((pId,ovVersion), vId)) zippedVersions
 
-    snapshots <- flip mapM [0..6] $ \osId -> do
+    snapshots <- flip mapM [1..6] $ \osId -> do
         shuffled <- shuffleM zippedPackages
         let osName = T.pack $ "nightly-" <> show osId
         let chosenPackages = take (length shuffled `div` 2) shuffled
