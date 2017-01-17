@@ -26,17 +26,17 @@ CREATE TABLE GpgKey (
 CREATE TABLE Package (
   -- Main info
   PackageId SERIAL NOT NULL PRIMARY KEY,
-  PName VARCHAR(30) NOT NULL,
-  PSite VARCHAR(90) NOT NULL,
-  PLicense VARCHAR(20) NOT NULL,
+  PackageName VARCHAR(30) NOT NULL,
+  Site VARCHAR(90) NOT NULL,
+  License VARCHAR(20) NOT NULL,
   Author TEXT NOT NULL,
   LastVersion SERIAL NOT NULL,
 
   -- Options zone
   NotifyMaintainers BOOL NOT NULL DEFAULT TRUE,
   NotifyUploader BOOL NOT NULL DEFAULT TRUE,
-  PDepricated BOOL NOT NULL DEFAULT FALSE,
-  PPrivate BOOL NOT NULL DEFAULT FALSE
+  Deprecated BOOL NOT NULL DEFAULT FALSE,
+  Private BOOL NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE Maintainers (
@@ -69,7 +69,7 @@ CREATE TABLE Dependencies (
 CREATE TABLE Snapshot (
   SnapshotId SERIAL NOT NULL PRIMARY KEY,
   SnapshotName VARCHAR(20) NOT NULL, -- mnemonic (lts-5.9, nigthly-2017.01.06)
-  SnapshotSuccess BOOL NOT NULL DEFAULT FALSE
+  PassesBuild BOOL NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE SnapshotVersions (
