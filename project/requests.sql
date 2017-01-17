@@ -108,17 +108,3 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE FUNCTION packages_downloads()
-  RETURNS TABLE (pId INTEGER, packName VARCHAR, downloadCount NUMERIC) AS $$
-BEGIN
-  RETURN QUERY (
-    SELECT p.PackageId, p.PackageName, sum(DS) as downloadCount
-    FROM Package p INNER JOIN (
-      SELECT VPackage, count(*) as DS
-      FROM Version v INNER JOIN Downloads d on (v.VersionId = d.DVersion)
-      GROUP BY VPackage) v1 on (p.PackageId = v1.VPackage)
-    GROUP BY p.PackageId ORDER BY downloadCount DESC
-  );
-END;
-$$ LANGUAGE plpgsql;

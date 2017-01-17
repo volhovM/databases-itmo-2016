@@ -61,7 +61,7 @@ CREATE INDEX ON Downloads USING hash (DBinaryBuild);
 CREATE INDEX ON Downloads USING btree (DTime);
 
 
------- PROCEDURES AND TRIGGERS ------
+------ TRIGGERS ------
 
 CREATE FUNCTION check_build_state() RETURNS TRIGGER AS $$
 DECLARE
