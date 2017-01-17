@@ -1,7 +1,7 @@
 CREATE DOMAIN HASH256 AS BYTEA CHECK (octet_length(VALUE) = 32);
 CREATE DOMAIN HASH160 AS BYTEA CHECK (octet_length(VALUE) = 20);
 CREATE DOMAIN SIG256 AS BYTEA CHECK (octet_length(VALUE) = 32);
-CREATE TYPE BUILDSTATUS AS ENUM ('PENDING','IN PROGRESS', 'SUCCESS', 'FAIL');
+CREATE TYPE BUILDSTATUS AS ENUM ('PENDING','IN PROGRESS', 'SUCCESS', 'FAILURE');
 
 CREATE TABLE RegisteredUser (
   UserId SERIAL NOT NULL PRIMARY KEY,
@@ -14,7 +14,7 @@ CREATE TABLE RegisteredUser (
 CREATE TABLE SshKey (
   SshId SERIAL NOT NULL PRIMARY KEY,
   SshPubKey TEXT NOT NULL,
-  SshOwner SERIAL NOT NULL
+  SshOwner INTEGER NOT NULL
 );
 
 CREATE TABLE GpgKey (
@@ -30,7 +30,7 @@ CREATE TABLE Package (
   Site VARCHAR(90) NOT NULL,
   License VARCHAR(20) NOT NULL,
   Author TEXT NOT NULL,
-  LastVersion SERIAL NOT NULL,
+  LastVersion INTEGER NOT NULL,
 
   -- Options zone
   NotifyMaintainers BOOL NOT NULL DEFAULT TRUE,
@@ -40,8 +40,8 @@ CREATE TABLE Package (
 );
 
 CREATE TABLE Maintainers (
-  MaintUser SERIAL NOT NULL,
-  MaintPackage SERIAL NOT NULL,
+  MaintUser INTEGER NOT NULL,
+  MaintPackage INTEGER NOT NULL,
 
   PRIMARY KEY (MaintUser,MaintPackage)
 );
@@ -51,17 +51,17 @@ CREATE TABLE Version (
   VersionId SERIAL NOT NULL PRIMARY KEY,
   VersionL VARCHAR(15) NOT NULL, -- Version literal
   Category TEXT NOT NULL, -- Category list: a,b,c,d
-  VPackage SERIAL NOT NULL,
+  VPackage INTEGER NOT NULL,
 
   -- Upload-related
-  Uploader SERIAL NOT NULL,
+  Uploader INTEGER NOT NULL,
   UploadSign HASH256,
   UploadTime TIMESTAMP NOT NULL
 );
 
 CREATE TABLE Dependencies (
-  DepParent SERIAL NOT NULL,  -- depends on children
-  DepChild SERIAL NOT NULL,
+  DepParent INTEGER NOT NULL,  -- depends on children
+  DepChild INTEGER NOT NULL,
 
   PRIMARY KEY (DepChild, DepParent)
 );
@@ -73,8 +73,8 @@ CREATE TABLE Snapshot (
 );
 
 CREATE TABLE SnapshotVersions (
-  SVSnapshot SERIAL NOT NULL,
-  SVVersion SERIAL NOT NULL,
+  SVSnapshot INTEGER NOT NULL,
+  SVVersion INTEGER NOT NULL,
 
   PRIMARY KEY (SVSnapshot, SVVersion)
 );
@@ -85,7 +85,7 @@ CREATE TABLE Build (
   TimeStarted TIMESTAMP NOT NULL, -- means "planned time to start" if "planned"
   TimeFinished TIMESTAMP,
   WorkDirectory TEXT,
-  BuildVersion SERIAL NOT NULL
+  BuildVersion INTEGER NOT NULL
 );
 
 CREATE TABLE Downloads (
@@ -93,6 +93,6 @@ CREATE TABLE Downloads (
   DTime TIMESTAMP NOT NULL,
   DIp VARCHAR(15),
   DBrowser VARCHAR(40),
-  DVersion SERIAL NOT NULL,
+  DVersion INTEGER NOT NULL,
   DBinaryBuild INTEGER DEFAULT NULL
 );

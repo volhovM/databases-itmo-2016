@@ -11,5 +11,6 @@ psql pkgmanager -f realdata_versions.sql
 psql pkgmanager -f realdata_deps.sql
 psql pkgmanager -f realdata_snapshots.sql
 psql pkgmanager -f realdata_snapshot_versions.sql
+psql pkgmanager -f realdata_builds.sql
 psql pkgmanager -f realdata_downloads.sql
 psql pkgmanager -f constraints.sql

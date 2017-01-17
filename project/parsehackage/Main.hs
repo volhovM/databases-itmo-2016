@@ -197,7 +197,9 @@ insertUsers !users = do
             mconcat ["  (", T.pack (show ouId), ", '", ouLogin
                     ,"', '", ouName, "', '", ouEmail, "',"
                     , "decode('", ouPassHash, "', 'base64'))"]
-        insertUsers = pre1 <> T.intercalate ",\n" (map row1 users) <> ";"
+        post1 = "ALTER SEQUENCE registereduser_userid_seq RESTART WITH " <>
+            show' (length users) <> ";"
+        insertUsers = pre1 <> T.intercalate ",\n" (map row1 users) <> ";\n"<> post1
     TIO.writeFile "realdata_users.sql" insertUsers
 
     putStrLn "dumping ssh"
@@ -224,10 +226,10 @@ insertUsers !users = do
 
 insertPackages :: [OutputUser] -> [OutputPackage] -> IO ()
 insertPackages users packages = do
-    let zippedPackages = packages `zip` [0..]
+    let zippedPackages = packages `zip` [1..]
         zippedVersions :: [((Int, OutputVersion), Int)]
         zippedVersions =
-            (concatMap (\(o,i) -> map (i, ) $ oVersions o) zippedPackages) `zip` [0..]
+            (concatMap (\(o,i) -> map (i, ) $ oVersions o) zippedPackages) `zip` [1..]
         packagesToVersion :: M.Map Int Int
         packagesToVersion = M.fromList $ map (\((pId,_), vId) -> (pId, vId)) zippedVersions
         uploaderMap :: M.Map Text Int
@@ -253,7 +255,10 @@ insertPackages users packages = do
                     , ", ", show' oNotifyUploader
                     , ", ", show' oDeprecated
                     , ", ", show' oPrivate, ")"]
-        insertPackages = pre1 <> T.intercalate ",\n" (map row1 zippedPackages) <> ";"
+        post1 = "ALTER SEQUENCE package_packageid_seq RESTART WITH " <>
+            show'(length packages+1) <> ";"
+        insertPackages =
+            pre1 <> T.intercalate ",\n" (map row1 zippedPackages) <> ";\n" <> post1
     TIO.writeFile "realdata_packages.sql" insertPackages
 
     putStrLn "dumping versions"
@@ -268,7 +273,10 @@ insertPackages users packages = do
                     , ", ", (maybeNull $ (\s -> "decode('"<>s<>"', 'base64')") <$> ovSign)
                     , ", '", formatUTCPostgres ovUploaded, "')"
                     ]
-        insertVersions = pre2 <> T.intercalate ",\n" (map row2 zippedVersions) <> ";"
+        post2 = "ALTER SEQUENCE version_versionid_seq RESTART WITH " <>
+            show'(length zippedVersions+1) <> ";"
+        insertVersions =
+            pre2 <> T.intercalate ",\n" (map row2 zippedVersions) <> ";\n" <> post2
     TIO.writeFile "realdata_versions.sql" insertVersions
 
     putStrLn "dumping maintainers"
@@ -296,8 +304,10 @@ insertSnapshots snapshots = do
     putStrLn "dumping snapshots"
     let pre1 = "INSERT INTO Snapshot (SnapshotId, SnapshotName) VALUES\n"
         row1 OutputSnapshot{..} = mconcat [ "    (", show' osId, ",'", osName, "')"]
+        post1 = "ALTER SEQUENCE snapshot_snapshotid_seq RESTART WITH " <>
+            show'(length snapshots+1) <> ";"
         insertDeps =
-            pre1 <> T.intercalate ",\n" (map row1 snapshots) <> ";"
+            pre1 <> T.intercalate ",\n" (map row1 snapshots) <> ";\n" <> post1
     TIO.writeFile "realdata_snapshots.sql" insertDeps
 
     putStrLn "dumping snapshot versions"
@@ -321,8 +331,6 @@ insertDownloads downloads = do
         insertDeps =
             pre1 <> T.intercalate ",\n" (map row1 downloads) <> ";"
     TIO.writeFile "realdata_downloads.sql" insertDeps
-
-
 
 ----------------------------------------------------------------------------
 -- Main
@@ -368,13 +376,13 @@ main = do
     --(packages :: [Package]) <- getResponseBodyData "packages/"
     let packages = map Package topHackagePackages
     putStrLn $ "total packages on hackage: " ++ show (length packages)
-    outputPackages <- flip mapM (take 200 packages) $ \p@(Package oPackageName) -> runMaybeT $ do
+    outputPackages <- flip mapM (take 300 packages) $ \p@(Package oPackageName) -> runMaybeT $ do
         let pname = T.unpack oPackageName
         (Versions versions) <-
             lift $ getResponseBodyData $ "package/" ++ pname ++ "/preferred"
         let takeLast n xs = drop (length xs - n) xs
         let (versions' :: [Version]) =
-                takeLast 4 $
+                takeLast 5 $
                 map (\v -> fst $ last $ readP_to_S parseVersion v) versions
 
         (Maintainers maintainers) <-
@@ -424,10 +432,10 @@ main = do
     normalized <- normalizePackages justsPackages
     insertPackages outputUsers normalized
 
-    let zippedPackages = normalized `zip` [0..]
+    let zippedPackages = normalized `zip` [1..]
         zippedVersions :: [((Int, OutputVersion), Int)]
         zippedVersions =
-            (concatMap (\(o,i) -> map (i, ) $ oVersions o) zippedPackages) `zip` [0..]
+            (concatMap (\(o,i) -> map (i, ) $ oVersions o) zippedPackages) `zip` [1..]
         resolveVersion :: M.Map (Int,Version) Int -- (pId,version) -> vId
         resolveVersion =
             M.fromList $
@@ -446,7 +454,7 @@ main = do
     insertSnapshots snapshots
 
     downloads <- flip mapM zippedVersions $ \((pId,OutputVersion{..}),vId) -> do
-        downloadTimes <- ceiling . (** 0.4) <$> randomRIO (0::Double, 100000.0)
+        downloadTimes <- ceiling . (** 0.4) <$> randomRIO (0::Double, 1000000.0)
         let odVersion = vId
         replicateM downloadTimes $ do
             odBrowser <- randomBrowser
