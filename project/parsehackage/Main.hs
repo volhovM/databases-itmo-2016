@@ -250,7 +250,8 @@ insertPackages users packages = do
                     , "','", oSite
                     , "','", oLicense
                     , "','", oAuthor
-                    , "',",  show' (packagesToVersion ! pId)
+                    , "',",  show' (head $ oMaintainers)
+                    , ",",  show' (packagesToVersion ! pId)
                     , ", ", show' oNotifyMaintainers
                     , ", ", show' oNotifyUploader
                     , ", ", show' oDeprecated

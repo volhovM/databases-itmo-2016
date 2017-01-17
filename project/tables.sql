@@ -30,6 +30,7 @@ CREATE TABLE Package (
   Site VARCHAR(90) NOT NULL,
   License VARCHAR(20) NOT NULL,
   Author TEXT NOT NULL,
+  MainMaintainer INTEGER NOT NULL,
   LastVersion INTEGER NOT NULL,
 
   -- Options zone

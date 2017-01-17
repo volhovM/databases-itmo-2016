@@ -9,11 +9,14 @@ ALTER TABLE GpgKey ADD CONSTRAINT FK_GpgKey_UserId
 ALTER TABLE GpgKey ADD CONSTRAINT UN_GpgKey_GpgPublicKeyId UNIQUE(GpgPublicKeyId);
 ALTER TABLE Package ADD CONSTRAINT FK_LastVersion_VersionId
   FOREIGN KEY (LastVersion) REFERENCES Version(VersionId) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE Package ADD CONSTRAINT FK_MainMaintainer_MaintUser
+  FOREIGN KEY (PackageId,MainMaintainer)
+  REFERENCES Maintainers(MaintPackage,MaintUser) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE Package ADD CONSTRAINT UN_Package_PackageName UNIQUE(PackageName);
 ALTER TABLE Maintainers ADD CONSTRAINT FK_MaintUser_UserId
   FOREIGN KEY (MaintUser) REFERENCES RegisteredUser(UserId) ON DELETE CASCADE;
 ALTER TABLE Maintainers ADD CONSTRAINT FK_MaintPackage_PackageId
-  FOREIGN KEY (MaintPackage) REFERENCES Package(PackageId) ON DELETE CASCADE;
+  FOREIGN KEY (MaintPackage) REFERENCES Package(PackageId) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE Version ADD CONSTRAINT FK_VPackage_PackageId
   FOREIGN KEY (VPackage) REFERENCES Package(PackageId) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE Version ADD CONSTRAINT FK_Uploader_UserId
@@ -46,14 +49,14 @@ ALTER TABLE Downloads ADD CONSTRAINT FK_DBinaryBuild_BuildId
 ---- For searching packages by name/regex.
 CREATE INDEX ON Package USING btree (PackageName);
 ---- For quickly finding the package related to VersionId
-CREATE INDEX ON Version USING btree (VersionId, VPackage);
+-- CREATE INDEX ON Version USING btree (VersionId, VPackage);
 ---- For getting all versions of the package
 CREATE INDEX ON Version USING hash (VPackage);
 ---- Search user by login/email for quick log in
 CREATE INDEX ON RegisteredUser USING hash (UserLogin);
 CREATE INDEX ON RegisteredUser USING hash (Email);
 ---- For stats -- getting downloads by version/binary build/time range
-CREATE INDEX ON Downloads USING hash (DVersion);
+CREATE INDEX ON Downloads USING hash (DVersion); -- 0.4 ms w/ vs 33.3 ms w/o
 CREATE INDEX ON Downloads USING hash (DBinaryBuild);
 CREATE INDEX ON Downloads USING btree (DTime);
 
@@ -111,8 +114,6 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER auto_update_package_version AFTER INSERT ON Version
   FOR EACH ROW EXECUTE PROCEDURE auto_update_package_version();
 
--- \forall snapshot version exists build with this version and success tag
--- \not exists snapshot version $ not exist build with this version and success tag
 CREATE FUNCTION set_snapshot_to_succeeded() RETURNS TRIGGER AS $$
 DECLARE
   sid INTEGER;
@@ -137,3 +138,24 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER set_snapshot_to_succeeded AFTER INSERT OR UPDATE ON Build
   FOR EACH ROW EXECUTE PROCEDURE set_snapshot_to_succeeded();
+
+CREATE FUNCTION snapshot_contains_no_version_duplicates() RETURNS TRIGGER AS $$
+DECLARE
+  pId INTEGER;
+BEGIN
+  SELECT VPackage INTO pId FROM Version WHERE VersionId = NEW.SVVersion;
+  IF (pId,NEW.SVSnapshot) IN (
+       SELECT VPackage, SVSnapshot
+       FROM SnapshotVersions s
+       INNER JOIN Version v
+       ON (s.SVVersion = v.VersionId)) THEN
+      RAISE EXCEPTION 'This package (%) is already in snapshot %',
+        pId, NEW.SVSnapshot;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER snapshot_contains_no_version_duplicates BEFORE INSERT OR UPDATE ON SnapshotVersions
+  FOR EACH ROW EXECUTE PROCEDURE snapshot_contains_no_version_duplicates();
