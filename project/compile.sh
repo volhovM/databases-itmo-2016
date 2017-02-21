@@ -15,3 +15,4 @@ psql pkgmanager -f realdata_downloads.sql
 psql pkgmanager -f constraints.sql
 psql pkgmanager -f realdata_snapshot_versions.sql
 psql pkgmanager -f requests.sql
+psql pkgmanager -f rights.sql

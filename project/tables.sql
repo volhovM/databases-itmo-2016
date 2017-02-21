@@ -18,7 +18,7 @@ CREATE TABLE SshKey (
 );
 
 CREATE TABLE GpgKey (
-  GpgOwner SERIAL NOT NULL PRIMARY KEY,
+  GpgOwner INTEGER NOT NULL PRIMARY KEY,
   GpgPublicKeyId HASH160 NOT NULL, -- Gpg PublicKey id ~ fingerprint
   GpgSignature SIG256 NOT NULL
 );
